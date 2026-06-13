@@ -8,13 +8,17 @@
 
 - **Duty Toggle** — Staff can go on/off duty with `/duty on`, `/duty off`, or `/duty toggle`
 - **Separate Inventories** — Completely separate inventory (including ender chest) for on-duty and off-duty states
+- **State Restore** — Restore gamemode, flight, health, food, XP, level, and location when going off duty
 - **Playtime Tracking** — Track how long each staff member has been on duty, with a leaderboard
-- **AFK Detection** — Automatically pause, take off duty, or kick AFK staff with fully configurable triggers
+- **AFK Detection** — Automatically pause, take off duty, or kick AFK staff with fully configurable activity triggers
+- **Cooldowns** — Configurable cooldowns for going on/off duty with bypass permission support
 - **Staff Chat** — Private staff chat with mention highlighting, sounds, and Discord forwarding
 - **LuckPerms Integration** — Automatically add/remove groups and permissions when going on/off duty
-- **Staff Visibility** — Glow effect and custom name tag prefix/suffix for off-duty staff
+- **Staff Visibility** — Glow effect and custom name tag prefix/suffix for staff players
 - **Discord Webhooks** — Send on/off duty events and staff chat messages to Discord
-- **Duty Log** — Daily or single log files of all duty sessions
+- **Duty Log** — Daily or single log files of all duty sessions with auto-cleanup
+- **Auto Updater** — Checks GitHub for new releases and optionally downloads them automatically
+- **Proxy Mode** — BungeeCord/Velocity support with shared playtime across servers (requires MySQL)
 - **PlaceholderAPI Support** — Rich set of placeholders for scoreboards, tab lists, and more
 - **Multi-language** — English, Spanish, Russian, and Chinese included out of the box
 - **MySQL & YAML Storage** — Choose between file-based or database storage with HikariCP connection pooling
@@ -23,12 +27,12 @@
 
 ## 📋 Requirements
 
-| Requirement | Version                                       |
-|---|-----------------------------------------------|
-| Spigot / Paper | 1.19.x – 1.20.x                               |
-| Java | 8+                                            |
+| Requirement | Version |
+|---|---|
+| Spigot / Paper | 1.19.x – 1.20.x |
+| Java | 8+ |
 | LuckPerms | Any recent version (optional but recommended) |
-| PlaceholderAPI | Any recent version (optional)                 |
+| PlaceholderAPI | Any recent version (optional) |
 
 ---
 
@@ -46,15 +50,18 @@
 
 | Command | Description | Permission |
 |---|---|---|
-| `/duty on [reason]` | Go on duty | `advancedduty.use` |
-| `/duty off` | Go off duty | `advancedduty.use` |
-| `/duty toggle [reason]` | Toggle duty state | `advancedduty.use` |
+| `/duty on [player] [reason]` | Go on duty | `advancedduty.use` |
+| `/duty off [player]` | Go off duty | `advancedduty.use` |
+| `/duty toggle [player] [reason]` | Toggle duty state | `advancedduty.use` |
 | `/duty status [player]` | View duty status | `advancedduty.status` |
 | `/duty playtime [player]` | Check playtime | `advancedduty.playtime` |
 | `/duty playtimetop [page]` | Leaderboard | `advancedduty.playtime.top` |
 | `/duty reset <player>` | Reset a player's playtime | `advancedduty.playtime.reset` |
+| `/duty languages` | Open language selection GUI | `advancedduty.languages` |
+| `/duty update` | Check for and download updates | `advancedduty.update` |
 | `/duty reload` | Reload config & language files | `advancedduty.reload` |
 | `/duty version` | Show plugin version | — |
+| `/duty help` | Show help menu | — |
 | `/staffchat <message>` | Send a staff chat message | `advancedduty.staffchat` |
 
 ---
@@ -64,6 +71,7 @@
 | Permission | Description | Default |
 |---|---|---|
 | `advancedduty.use` | Use `/duty on/off/toggle` | `false` |
+| `advancedduty.use.others` | Toggle duty for other players | `false` |
 | `advancedduty.staff` | Counted in playtime tracking | `false` |
 | `advancedduty.status` | View own duty status | `false` |
 | `advancedduty.status.others` | View other players' status | `false` |
@@ -71,8 +79,11 @@
 | `advancedduty.playtime.others` | Check other players' playtime | `false` |
 | `advancedduty.playtime.top` | View leaderboard | `false` |
 | `advancedduty.playtime.reset` | Reset a player's playtime | `op` |
+| `advancedduty.languages` | Open language selection GUI | `false` |
+| `advancedduty.update` | Check for and download updates | `op` |
 | `advancedduty.staffchat` | Send staff chat messages | `false` |
-| `advancedduty.staffchat.receive` | Receive staff chat (without being on duty) | `false` |
+| `advancedduty.staffchat.receive` | Receive staff chat without being on duty | `false` |
+| `advancedduty.cooldown.bypass` | Bypass duty cooldowns | `false` |
 | `advancedduty.reload` | Reload the plugin | `op` |
 
 ---
@@ -130,6 +141,14 @@ To add your own language, copy `en.yml`, rename it, and translate the messages.
 
 ---
 
+## 🌐 Proxy Mode
+
+For BungeeCord or Velocity networks, set `proxy-mode.enabled: true` and `storage.type: MYSQL`.  
+With `shared-playtime: true`, duty playtime is combined across all servers in the network.  
+The `sync-interval-seconds` option controls how often active sessions are pushed to the database.
+
+---
+
 ## 🤖 AFK Detection
 
 When a staff member is on duty and becomes inactive, AdvancedDuty can:
@@ -138,7 +157,27 @@ When a staff member is on duty and becomes inactive, AdvancedDuty can:
 - **AUTO_OFF** — Automatically take them off duty
 - **KICK** — Kick them from the server
 
-You can configure exactly which actions count as activity (movement, chat, commands, inventory clicks, etc.) under `duty.afk.track` in `config.yml`.
+Configure which actions count as activity (movement, chat, commands, inventory clicks, etc.) under `duty.afk.track` in `config.yml`. A warning can be sent before the AFK action triggers via `warn-before-seconds`.
+
+---
+
+## ⏱️ Cooldowns
+
+Prevent duty spam by enabling cooldowns under `duty.cooldown`:
+
+---
+
+## 🔄 Auto Updater
+
+AdvancedDuty can check GitHub for new releases on startup and optionally download the new jar automatically:
+
+yaml
+update:
+  enabled: true
+  auto-download: true
+  check-on-startup: true
+
+Use `/duty update` to manually trigger a check at any time.
 
 ---
 
@@ -156,10 +195,13 @@ The full `config.yml` is heavily commented — every option has an explanation d
 - `duty.restore` — what gets restored when going off duty
 - `duty.inventory` — separate inventory settings
 - `duty.afk` — AFK detection and activity tracking
+- `duty.cooldown` — on/off duty cooldowns
 - `storage` — YAML or MySQL
+- `proxy-mode` — BungeeCord/Velocity network support
 - `hooks.luckperms` — staff toggle, duty meta, name tags, glow
 - `staffchat` — format, sounds, mentions
 - `discord` — webhook integration
+- `update` — auto updater settings
 
 ---
 

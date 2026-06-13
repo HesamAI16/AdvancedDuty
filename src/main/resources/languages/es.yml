@@ -1,0 +1,86 @@
+prefix: "<g:#00F5FF:#BD3EFF>&lDUTY</g> &7» "
+
+messages:
+  only-player: "&cEste comando solo puede ser usado por jugadores."
+  no-permission: "&cNo tienes permiso para usar este comando."
+  version: "&7Versión de tu build: &fv{version}"
+  config-reloaded: "&aLa configuración y los archivos de idioma se han recargado."
+
+  update-checking: "&7Buscando actualizaciones del plugin..."
+  update-found: "&aHay una nueva versión disponible: &fv{version}"
+  update-downloading: "&eDescargando actualización... Reinicia el servidor después de completar."
+  update-latest: "&aYa estás usando la versión más reciente."
+
+  duty-enabled: "&aModo duty activado."
+  duty-disabled: "&cModo duty desactivado."
+  already-on-duty: "&eYa estás en servicio."
+  already-off-duty: "&eYa estás fuera de servicio."
+  duty-enabled-other: "&aEl duty de {player} ha sido activado."
+  duty-disabled-other: "&cEl duty de {player} ha sido desactivado."
+  already-on-duty-other: "&e{player} ya está en servicio."
+  already-off-duty-other: "&e{player} ya está fuera de servicio."
+  target-no-duty-access: "&c{player} no tiene acceso al duty."
+
+  cooldown-active: "&cDebes esperar &e{time}s &cantes de volver a usar esto."
+  usage-duty: "&cUso: /{label} [on|off|toggle]"
+  usage-duty-reason: "&cUso: /{label} <on|toggle> [jugador] <razón>"
+  unknown-player: "&cJugador no encontrado."
+
+  staffchat-not-on-duty: "&cDebes estar en servicio para usar el chat del staff."
+  staffchat-format: "&8[&bSTAFF&8] &7{player}&8: &f{message}"
+  staffchat-usage: "&cUso: /sc <mensaje>"
+  help-staffchat: "&7/{label} staffchat <mensaje> &8- &fChat del staff"
+
+  playtime-self: "&7Tu tiempo en servicio: &b{time}"
+  playtime-other: "&7Tiempo en servicio de {player}: &b{time}"
+  playtime-never: "&7{player} no tiene tiempo en servicio registrado."
+  playtime-reset: "&aEl tiempo de servicio de &e{player} &aha sido restablecido."
+  usage-reset: "&cUso: /{label} reset <jugador>"
+
+  top-header: "&8&m-----&r &b&lTop de tiempo en duty &8&m-----"
+  top-entry: "&7{rank}. &f{player} &8» &b{time}"
+  top-footer: "&8Página {page}/{max}"
+  top-empty: "&7No se encontraron datos de tiempo."
+
+  log-header: "&8&m-----&r &6&lRegistro de duty: &f{player} &8&m-----"
+  log-entry: "&8#{index} &7{start} &8→ &7{end} &8(&f{duration}&8) &7{reason}"
+  log-active: "&aActivo"
+  log-empty: "&cNo se encontró ningún registro de duty para &f{player}&c."
+
+  status-line: "&7Estado de &e{player}&7: {status} &7| Tiempo: &a{time}"
+
+  help-header: "&8&m-----&r &6&lAyuda de AdvancedDuty &8&m-----"
+  help-on: "&7/{label} on [jugador] [razón] &8- &fEntrar en servicio"
+  help-off: "&7/{label} off [jugador] &8- &fSalir de servicio"
+  help-toggle: "&7/{label} toggle [jugador] [razón] &8- &fAlternar duty"
+  help-status: "&7/{label} status [jugador] &8- &fVer estado del duty"
+  help-playtime: "&7/{label} playtime [jugador] &8- &fVer tiempo en servicio"
+  help-playtimetop: "&7/{label} playtimetop [página] &8- &fClasificación de tiempo"
+  help-log: "&7/{label} log [jugador] [página] &8- &fVer registro de duty"
+  help-reset: "&7/{label} reset <jugador> &8- &fRestablecer el tiempo de un jugador"
+  help-reload: "&7/{label} reload &8- &fRecargar configuración"
+  help-languages: "&7/{label} languages &8- &fAbrir el selector de idioma"
+  help-update: "&7/{label} update &8- &fBuscar y descargar la última versión"
+  help-version: "&7/{label} version &8- &fVersión del plugin"
+
+  language-already-active: "&cEste idioma ya está activo."
+  language-changed: "&aEl idioma del plugin ha sido cambiado a &f{language}&a."
+
+  afk-detected: "&e[AFK] &7Has sido marcado como AFK."
+  afk-paused: "&7Tu tiempo en servicio ha sido &epausado&7."
+  afk-returned: "&aYa no estás AFK. El tiem se ha reanudado."
+  afk-auto-off: "&cHas sido retirado del duty por inactividad."
+  afk-staff-notify: "&7[AFK] &e{player} &7ahora está AFK mientras está en servicio."
+  afk-warn: "&eAviso: pronto serás marcado como AFK por inactividad."
+
+placeholders:
+  status:
+    on_duty: "EN SERVICIO"
+    off_duty: "FUERA DE SERVICIO"
+  status_color:
+    on_duty: "&aEN SERVICIO"
+    off_duty: "&cFUERA DE SERVICIO"
+  no_staff_online: "Ninguno"
+  duty_icon:
+    on_duty: "✔"
+    off_duty: "✘"

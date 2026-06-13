@@ -1,0 +1,86 @@
+prefix: "<g:#00F5FF:#BEFF>&lDUTY</g> &7» "
+
+messages:
+  only-player: "&c该命令只能由玩家使用。"
+  no-permission: "&c你没有权限使用此命令。"
+  version: "&7当前构建版本：&fv{version}"
+  config-reloaded: "&a配置文件和语言文件已重新加载。"
+
+  update-checking: "&7正在检查插件更新..."
+  update-found: "&a发现新版本: &fv{version}"
+  update-downloading: "&e正在下载更新... 下载完成后请重启服务器。"
+  update-latest: "&a你正在使用最新版本。"
+
+  duty-enabled: "&aDuty 模式已启用。"
+  duty-disabled: "&cDuty 模式已禁用。"
+  already-on-duty: "&e你已经处于 Duty 状态。"
+  already-off-duty: "&e你当前不在 Duty 状态。"
+  duty-enabled-other: "&a已为 {player} 启用 Duty 模式。"
+  duty-disabled-other: "&c已为 {player} 禁用 Duty 模式。"
+  already-on-duty-other: "&e{player} 已经处于 Duty 状态。"
+  already-off-duty-other: "&e{player} 当前不在 Duty 状态。"
+  target-no-duty-access: "&c{player} 没有使用 Duty 的权限。"
+
+  cooldown-active: "&c你必须等待 &e{time}秒 &c后才能再次使用此功能。"
+  usage-duty: "&c用法: /{label} [on|off|toggle]"
+  usage-duty-reason: "&c用法: /{label} <on|toggle> [玩家] <原因>"
+  unknown-player: "&c未找到该玩家。"
+
+  staffchat-not-on-duty: "&c你必须处于 Duty 状态才能使用员工聊天。"
+  staffchat-format: "&8[&bSTAFF&8] &7{player}&8: &f{message}"
+  staffchat-usage: "&c用法: /sc <消息>"
+  help-staffchat: "&7/{label} staffchat <消息> &8- &f员工聊天"
+
+  playtime-self: "&7你的 Duty 时长: &b{time}"
+  playtime-other: "&7{player} 的 Duty 时长: &b{time}"
+  playtime-never: "&7{player} 没有记录的 Duty 时长。"
+  playtime-reset: "&a已重置 &e{player} &a的 Duty 时长。"
+  usage-reset: "&c用法: /{label} reset <玩家>"
+
+  top-header: "&8&m-----&r &b&lDuty 时长排行榜 &8&m-----"
+  top-entry: "&7{rank}. &f{player} &8» &b{time}"
+  top-footer: "&8第 {page}/{max} 页"
+  top-empty: "&7未找到任何时长数据。"
+
+  log-header: "&8&m-----&r &6&lDuty 日志: &f{player} &8&m-----"
+  log-entry: "&8#{index} &7{start} &8→ &7{end} &8(&f{duration}&8) &7{reason}"
+  log-active: "&a进行中"
+  log-empty: "&c未找到玩家 &f{player}&c 的 Duty 日志。"
+
+  status-line: "&7玩家 &e{player}&7 的状态: {status} &7| 时长: &a{time}"
+
+  help-header: "&8&m-----&r &6&lAdvancedDuty 帮助 &8&m-----"
+  help-on: "&7/{label} on [玩家] [原因] &8- &f开启 Duty"
+  help-off: "&7/{label} off [玩家] &8- &f关闭 Duty"
+  help-toggle: "&7/{label} toggle [玩家] [原因] &8- &f切换 Duty"
+  help-status: "&7/{label} status [玩家] &8- &f查看 Duty 状态"
+  help-playtime: "&7/{label} playtime [玩家] &8- &f查看 Duty 时长"
+  help-playtimetop: "&7/{label} playtimetop [页码] &8- &fDuty 时长排行榜"
+  help-log: "&7/{label} log [玩家] [页码] &8- &f查看 Duty 日志"
+  help-reset: "&7/{label} reset <玩家> &8- &f重置玩家时长"
+  help-reload: "&7/{label} reload &8- &f重新加载配置"
+  help-languages: "&7/{label} languages &8- &f打开语言选择界面"
+  help-update: "&7/{label} update &8- &f检查并下载最新版本"
+  help-version: "&7/{label} version &8- &f插件版本"
+
+  language-already-active: "&c该语言已经是当前语言。"
+  language-changed: "&a插件语言已切换为 &f{language}&a。"
+
+  afk-detected: "&e[AFK] &7你已被标记为 AFK。"
+  afk-paused: "&7你的 Duty 时长已被 &e暂停&7。"
+  afk-returned: "&a你已不再处于 AFK，时长统计已恢复。"
+  afk-auto-off: "&c你因长时间无操作已被自动下 Duty。"
+  afk-staff-notify: "&7[AFK] &e{player} &7在 Duty 状态下进入了 AFK。"
+  afk-warn: "&e警告: 你很快会因不活跃而被标记为 AFK。"
+
+placeholders:
+  status:
+    on_duty: "值勤中"
+    off_duty: "未值勤"
+  status_color:
+    on_duty: "&a值勤中"
+    off_duty: "&c未值勤"
+  no_staff_online: "无"
+  duty_icon:
+    on_duty: "✔"
+    off_duty: "✘"

@@ -1,0 +1,50 @@
+name: AdvancedDuty
+version: '${project.version}'
+main: me.hesamai.advancedduty.Main
+api-version: '1.19'
+author: [HesamAI]
+
+commands:
+  duty:
+    description: Toggle duty mode
+    usage: /duty [on|off|toggle|status|playtime|playtimetop|reset|reload|version|help]
+    aliases: [staffduty, advancedduty, ad]
+  staffchat:
+    description: Staff chat
+    usage: /staffchat <message>
+    aliases: [sc]
+
+permissions:
+  advancedduty.use:
+    description: Use /duty on|off|toggle
+    default: op
+  advancedduty.languages:
+    description: Access the language selection GUI and change the plugin language.
+    default: op
+  advancedduty.status:
+    description: Check own duty status
+    default: op
+  advancedduty.status.others:
+    description: Check other players' duty status
+    default: op
+  advancedduty.playtime:
+    description: Check own duty playtime
+    default: op
+  advancedduty.playtime.others:
+    description: Check other players' duty playtime
+    default: op
+  advancedduty.playtime.top:
+    description: View top playtime leaderboard
+    default: op
+  advancedduty.playtime.reset:
+    description: Reset a player's duty playtime
+    default: op
+  advancedduty.reload:
+    description: Reload plugin config
+    default: op
+  advancedduty.staffchat:
+    description: Send messages in staff chat
+    default: op
+  advancedduty.staffchat.receive:
+    description: Receive staff chat messages without being on duty
+    default: op

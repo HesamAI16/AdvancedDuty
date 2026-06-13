@@ -1,0 +1,86 @@
+prefix: "<g:#00F5FF:#BD3EFF>&lDUTY</g> &7» "
+
+messages:
+  only-player: "&cЭта команда доступна только игрокам."
+  no-permission: "&cУ вас нет прав для использования этой команды."
+  version: "&7Версия вашей сборки: &fv{version}"
+  config-reloaded: "&aКонфигурация и языковые файлы были перезагружены."
+
+  update-checking: "&7Проверка обновлений плагина..."
+  update-found: "&aДоступна новая версия: &fv{version}"
+  update-downloading: "&eЗагрузка обновления... Перезапустите сервер после завершения."
+  update-latest: "&aВы используете последнюю версию плагина."
+
+  duty-enabled: "&aРежим duty включён."
+  duty-disabled: "&cРежим duty выключен."
+  already-on-duty: "&eВы уже на duty."
+  already-off-duty: "&eВы уже не на duty."
+  duty-enabled-other: "&aРежим duty для {player} был включён."
+  duty-disabled-other: "&cРежим duty для {player} был отключён."
+  already-on-duty-other: "&eИгрок {player} уже на duty."
+  already-off-duty-other: "&eИгрок {player} уже не на duty."
+  target-no-duty-access: "&cУ игрока {player} нет доступа к duty."
+
+  cooldown-active: "&cВы должны подождать &e{time}с &cперед повторным использованием."
+  usage-duty: "&cИспользование: /{label} [on|off|toggle]"
+  usage-duty-reason: "&cИспользование: /{label} <on|toggle> [игрок] <причина>"
+  unknown-player: "&cИгрок не найден."
+
+  staffchat-not-on-duty: "&cВы должны быть на duty, чтобы использовать staff chat."
+  staffchat-format: "&8[&bSTAFF&8] &7{player}&8: &f{message}"
+  staffchat-usage: "&cИспользование: /sc <сообщение>"
+  help-staffchat: "&7/{label} staffchat <сообщение> &8- &fЧат персонала"
+
+  playtime-self: "&7Ваше время на duty: &b{time}"
+  playtime-other: "&7Время на duty игрока {player}: &b{time}"
+  playtime-never: "&7У игрока {player} нет записанного времени на duty."
+  playtime-reset: "&aВремя duty игрока &e{player} &aбыло сброшено."
+  usage-reset: "&cИспользование: /{label} reset <игрок>"
+
+  top-header: "&8&m-----&r &b&lТоп времени duty &8&m-----"
+  top-entry: "&7{rank}. &f{player} &8» &b{time}"
+  top-footer: "&8Страница {page}/{max}"
+  top-empty: "&7Данные о времени не найдены."
+
+  log-header: "&8&m-----&r &6&lЖурнал duty: &f{player} &8&m-----"
+  log-entry: "&8#{index} &7{start} &8→ &7{end} &8(&f{duration}&8) &7{reason}"
+  log-active: "&aАктивно"
+  log-empty: "&cЖурнал duty для &f{player}&c не найден."
+
+  status-line: "&7Статус игрока &e{player}&7: {status} &7| Время: &a{time}"
+
+  help-header: "&8&m-----&r &6&lПомощь AdvancedDuty &8&m-----"
+  help-on: "&7/{label} on [игрок] [причина] &8- &fВключить duty"
+  help-off: "&7/{label} off [игрок] &8- &fВыключить duty"
+  help-toggle: "&7/{label} toggle [игрок] [причина] &8- &fПереключить duty"
+  help-status: "&7/{label} status [игрок] &8- &fПосмотреть статус duty"
+  help-playtime: "&7/{label} playtime [игрок] &8- &fПроверить время duty"
+  help-playtimetop: "&7/{label} playtimetop [страница] &8- &fТоп времени duty"
+  help-log: "&7/{label} log [игрок] [страница] &8- &fПосмотреть журнал duty"
+  help-reset: "&7/{label} reset <игрок> &8- &fСбросить время игрока"
+  help-reload: "&7/{label} reload &8- &fПерезагрузить конфигурацию"
+  help-languages: "&7/{label} languages &8- &fОткрыть выбор языка"
+  help-update: "&7/{label} update &8- &fПроверить и скачать последнюю версию"
+  help-version: "&7/{label} version &8- &fВерсия плагина"
+
+  language-already-active: "&cЭтот язык уже активен."
+  language-changed: "&aЯзык плагина был изменён на &f{language}&a."
+
+  afk-detected: "&e[AFK] &7Вы были помечены как AFK."
+  afk-paused: "&7Ваше время на duty было &eприостановлено&7."
+  afk-returned: "&aВы больше не AFK. Учёт времени возобновлён."
+  afk-auto-off: "&cВы были сняты с duty из-за бездействия."
+  afk-s-notify: "&7[AFK] &e{player} &7теперь AFK во время duty."
+  afk-warn: "&eПредупреждение: скоро вы будете помечены как AFK из-за бездействия."
+
+placeholders:
+  status:
+    on_duty: "НА DUTY"
+    off_duty: "НЕ НА DUTY"
+  status_color:
+    on_duty: "&aНА DUTY"
+    off_duty: "&cНЕ НА DUTY"
+  no_staff_online: "Никого"
+  duty_icon:
+    on_duty: "✔"
+    off_duty: "✘"

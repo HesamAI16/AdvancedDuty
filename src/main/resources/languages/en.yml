@@ -1,0 +1,86 @@
+prefix: "<g:#00F5FF:#BD3EFF>&lDUTY</g> &7» "
+
+messages:
+  only-player: "&cThis command is only for players."
+  no-permission: "&cYou do not have permission to use this command."
+  version: "&7Your build version: &fv{version}"
+  config-reloaded: "&aConfiguration and language files reloaded."
+
+  update-checking: "&7Checking for plugin updates..."
+  update-found: "&aA new version is available: &fv{version}"
+  update-downloading: "&eDownloading update... Restart the server after download."
+  update-latest: "&aYou are already using the latest version."
+
+  duty-enabled: "&aDuty mode enabled."
+  duty-disabled: "&cDuty mode disabled."
+  already-on-duty: "&eYou are already on duty."
+  already-off-duty: "&eYou are already off duty."
+  duty-enabled-other: "&aDuty for {player} has been enabled."
+  duty-disabled-other: "&cDuty for {player} has been disabled."
+  already-on-duty-other: "&e{player} is already on duty."
+  already-off-duty-other: "&e{player} is already off duty."
+  target-no-duty-access: "&c{player} does not have access to duty."
+
+  cooldown-active: "&cYou must wait &e{time}s &cbefore using this again."
+  usage-duty: "&cUsage: /{label} [on|off|toggle]"
+  usage-duty-reason: "&cUsage: /{label} <on|toggle> [player] <reason>"
+  unknown-player: "&cPlayer not found."
+
+  staffchat-not-on-duty: "&cYou must be on duty to use staff chat."
+  staffchat-format: "&8[&bSTAFF&8] &7{player}&8: &f{message}"
+  staffchat-usage: "&cUsage: /sc <message>"
+  help-staffchat: "&7/{label} staffchat <msg> &8- &fStaff chat"
+
+  playtime-self: "&7Your on-duty playtime: &b{time}"
+  playtime-other: "&7{player}'s on-duty playtime: &b{time}"
+  playtime-never: "&7{player} has no recorded on-duty time."
+  playtime-reset: "&aPlaytime of &e{player} &ahas been reset."
+  usage-reset: "&cUsage: /{label} reset <player>"
+
+  top-header: "&8&m-----&r &b&lTop Duty Playtime &8&m-----"
+  top-entry: "&7{rank}. &f{player} &8» &b{time}"
+  top-footer: "&8Page {page}/{max}"
+  top-empty: "&7No playtime data found."
+
+  log-header: "&8&m-----&r &6&lDuty Log: &f{player} &8&m-----"
+  log-entry: "&8#{index} &7{start} &8→ &7{end} &8(&f{duration}&8) &7{reason}"
+  log-active: "&aActive"
+  log-empty: "&cNo duty log found for &f{player}&c."
+
+  status-line: "&7Status of &e{player}&7: {status} &7| Playtime: &a{time}"
+
+  help-header: "&8&m-----&r &6&lAdvancedDuty Help &8&m-----"
+  help-on: "&7/{label} on [player] [reason] &8- &fGo on duty"
+  help-off: "&7/{label} off [player] &8- &fGo off duty"
+  help-toggle: "&7/{label} toggle [player] [reason] &8- &fToggle duty"
+  help-status: "&7/{label} status [player] &8- &fView duty status"
+  help-playtime: "&7/{label} playtime [player] &8- &fCheck duty playtime"
+  help-playtimetop: "&7/{label} playtimetop [page] &8- &fTop playtime leaderboard"
+  help-log: "&7/{label} log [player] [page] &8- &fView duty log"
+  help-reset: "&7/{label} reset <player> &8- &fReset a player's playtime"
+  help-reload: "&7/{label} reload &8- &fReload config"
+  help-languages: "&7/{label} languages &8- &fOpen language selector"
+  help-update: "&7/{label} update &8- &fCheck and download latest version"
+  help-version: "&7/{label} version &8- &fPlugin version"
+
+  language-already-active: "&cThis language is already active."
+  language-changed: "&aPlugin language changed to &f{language}&a."
+
+  afk-detected: "&e[AFK] &7You have been marked as AFK."
+  afk-paused: "&7Your duty playtime has been &epaused&7."
+  afk-returned: "&aYou are no longer AFK. Playtime resumed."
+  afk-auto-off: "&cYou were taken off duty due to inactivity."
+  afk-staff-notify: "&7[AFK] &e{player} &7is now AFK while on duty."
+  afk-warn: "&eWarning: You will be marked as AFK soon due to inactivity."
+
+placeholders:
+  status:
+    on_duty: "ON DUTY"
+    off_duty: "OFF DUTY"
+  status_color:
+    on_duty: "&aON DUTY"
+    off_duty: "&cOFF DUTY"
+  no_staff_online: "None"
+  duty_icon:
+    on_duty: "✔"
+    off_duty: "✘"

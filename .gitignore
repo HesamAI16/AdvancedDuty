@@ -1,0 +1,18 @@
+# Maven / Build
+target/
+out/
+build/
+
+# IntelliJ
+.idea/
+*.iml
+
+# Logs
+logs/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+*.jar

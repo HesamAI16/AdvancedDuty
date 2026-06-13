@@ -18,8 +18,17 @@ permissions:
   advancedduty.use:
     description: Use /duty on|off|toggle
     default: op
+  advancedduty.use.others:
+    description: Toggle duty for other players
+    default: op
+  advancedduty.cooldown.bypass:
+    description: Bypass duty on/off cooldown
+    default: op
   advancedduty.languages:
     description: Access the language selection GUI and change the plugin language.
+    default: op
+  advancedduty.update:
+    description: Check and download plugin updates
     default: op
   advancedduty.status:
     description: Check own duty status

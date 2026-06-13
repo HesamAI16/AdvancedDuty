@@ -388,6 +388,9 @@ public class DutyCommand implements CommandExecutor, TabCompleter {
             if (sender.hasPermission("advancedduty.languages")) {
                 subs.add("languages");
             }
+            if (sender.hasPermission("advancedduty.update")) {
+                subs.add("update");
+            }
 
             return filter(subs, args[0]);
         }

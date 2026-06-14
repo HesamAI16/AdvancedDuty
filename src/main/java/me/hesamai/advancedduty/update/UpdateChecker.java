@@ -3,14 +3,15 @@ package me.hesamai.advancedduty.update;
 import me.hesamai.advancedduty.Main;
 import org.bukkit.Bukkit;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class UpdateChecker {
 
     private final Main plugin;
+
+    private static final String LATEST_URL =
+            "https://github.com/HesamAI16/AdvancedDuty/releases/latest";
 
     public UpdateChecker(Main plugin){
         this.plugin = plugin;
@@ -22,50 +23,37 @@ public class UpdateChecker {
 
             try{
 
-                String owner = plugin.getConfig().getString("update.github.owner");
-                String repo = plugin.getConfig().getString("update.github.repo");
+                HttpURLConnection con =
+                        (HttpURLConnection) new URL(LATEST_URL).openConnection();
 
-                URL url = new URL("https://api.github.com/repos/"+owner+"/"+repo+"/releases/latest");
+                con.setInstanceFollowRedirects(false);
+                con.setConnectTimeout(10000);
+                con.setReadTimeout(10000);
 
-                HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                con.setRequestProperty("User-Agent","AdvancedDuty");
+                String location = con.getHeaderField("Location");
 
-                BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(con.getInputStream())
-                );
-
-                StringBuilder json = new StringBuilder();
-                String line;
-
-                while((line = reader.readLine()) != null){
-                    json.append(line);
+                if(location == null){
+                    plugin.getLogger().warning("Failed to detect latest release.");
+                    return;
                 }
 
-                reader.close();
-
-                String body = json.toString();
-
-                String latest = body.split("\"tag_name\":\"")[1].split("\"")[0];
-
-                String downloadUrl = null;
-
-                String[] parts = body.split("\"browser_download_url\":\"");
-
-                for(String part : parts){
-                    if(part.contains(".jar")){
-                        downloadUrl = part.split("\"")[0];
-                        break;
-                    }
-                }
+                String latest = location.substring(location.lastIndexOf("/") + 1);
+                latest = latest.replaceFirst("^v","");
 
                 String current = plugin.getDescription().getVersion();
 
-                boolean update = !current.equalsIgnoreCase(latest);
+                boolean updateAvailable = !current.equalsIgnoreCase(latest);
 
-                callback.result(latest,current,update,downloadUrl);
+                String downloadUrl =
+                        "https://github.com/HesamAI16/AdvancedDuty/releases/download/v"
+                                + latest +
+                                "/AdvancedDuty-" + latest + ".jar";
 
-            }catch(Exception e){
-                plugin.getLogger().warning("Update check failed: "+e.getMessage());
+                callback.result(latest,current,updateAvailable,downloadUrl);
+
+            }
+            catch(Exception e){
+                plugin.getLogger().warning("Update check failed: " + e.getMessage());
             }
 
         });
@@ -75,5 +63,4 @@ public class UpdateChecker {
     public interface UpdateCallback{
         void result(String latest,String current,boolean update,String downloadUrl);
     }
-
 }

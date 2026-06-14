@@ -24,26 +24,32 @@ public class UpdateDownloader {
             try{
 
                 URL url = new URL(downloadUrl);
-
                 InputStream in = url.openStream();
 
-                File file = new File(
+                File updateFolder = new File(
                         plugin.getDataFolder().getParentFile(),
-                        "AdvancedDuty-"+version+".jar"
+                        "update"
                 );
 
-                Files.copy(in, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                if(!updateFolder.exists()){
+                    updateFolder.mkdirs();
+                }
+
+                File file = new File(updateFolder,"AdvancedDuty.jar");
+
+                Files.copy(in,file.toPath(),StandardCopyOption.REPLACE_EXISTING);
 
                 in.close();
 
-                plugin.getLogger().info("Downloaded new version: "+version);
+                plugin.getLogger().info("Update downloaded: " + version);
+                plugin.getLogger().info("The update will be applied on next server restart.");
 
-            }catch(Exception e){
+            }
+            catch(Exception e){
                 plugin.getLogger().warning("Update download failed.");
                 e.printStackTrace();
             }
 
         });
     }
-
 }

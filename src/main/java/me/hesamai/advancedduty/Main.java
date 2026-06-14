@@ -95,13 +95,22 @@ public class Main extends JavaPlugin {
         updateDownloader = new UpdateDownloader(this);
 
         if(getConfig().getBoolean("update.check-on-startup")){
+
             updateChecker.check((latest,current,update,url)->{
 
                 if(update){
 
-                    getLogger().info("New version available: " + latest);
+                    getLogger().info("New update found!");
+                    getLogger().info("Current version: " + current);
+                    getLogger().info("Latest version: " + latest);
 
-                    if(getConfig().getBoolean("update.auto-download") && url != null){
+                    if(url == null){
+                        getLogger().warning("Update found but no downloadable jar detected.");
+                        return;
+                    }
+
+                    if(getConfig().getBoolean("update.auto-download")){
+                        getLogger().info("Downloading update...");
                         updateDownloader.download(url, latest);
                     }
 
@@ -110,6 +119,7 @@ public class Main extends JavaPlugin {
                 }
 
             });
+
         }
 
         getLogger().info("AdvancedDuty enabled.");

@@ -306,19 +306,24 @@ public class DutyCommand implements CommandExecutor, TabCompleter {
 
         plugin.getUpdateChecker().check((latest,current,update,url)->{
 
-            if(update){
+            Bukkit.getScheduler().runTask(plugin, () -> {
 
-                sender.sendMessage(lang.getMessage("update-found","{version}",latest));
+                if(update){
 
-                plugin.getUpdateDownloader().download(url,latest);
+                    sender.sendMessage(lang.getMessage("update-found","{version}",latest));
 
-                sender.sendMessage(lang.getMessage("update-downloading"));
+                    if(url != null){
+                        plugin.getUpdateDownloader().download(url,latest);
+                        sender.sendMessage(lang.getMessage("update-downloading"));
+                    }
 
-            }else{
+                } else{
 
-                sender.sendMessage(lang.getMessage("update-latest"));
+                    sender.sendMessage(lang.getMessage("update-latest"));
 
-            }
+                }
+
+            });
 
         });
 

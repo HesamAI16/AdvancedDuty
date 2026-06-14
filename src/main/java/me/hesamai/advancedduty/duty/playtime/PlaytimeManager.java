@@ -4,10 +4,9 @@ import me.hesamai.advancedduty.Main;
 import me.hesamai.advancedduty.duty.playtime.mysql.MySqlPlaytimeStorage;
 import me.hesamai.advancedduty.duty.playtime.yaml.YamlPlaytimeStorage;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class PlaytimeManager {
@@ -122,5 +121,18 @@ public class PlaytimeManager {
 
     public PlaytimeStorage getStorage() {
         return storage;
+    }
+
+    public int getActiveSessionsCount() {
+        return sessionStart.size();
+    }
+
+    public List<String> getOnlineStaffNames() {
+        List<String> names = new ArrayList<>();
+        for (UUID uuid : sessionStart.keySet()) {
+            Player p = Bukkit.getPlayer(uuid);
+            if (p != null) names.add(p.getName());
+        }
+        return names;
     }
 }

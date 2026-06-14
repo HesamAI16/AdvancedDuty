@@ -42,24 +42,14 @@ public class DutyExpansion extends PlaceholderExpansion {
         switch (p) {
 
             case "staff_online":
-                return String.valueOf(
-                        Bukkit.getOnlinePlayers().stream()
-                                .filter(dutyManager::isOnDuty)
-                                .count()
-                );
+                return String.valueOf(playtimeManager.getActiveSessionsCount());
 
             case "staff_list":
-                String list = Bukkit.getOnlinePlayers().stream()
-                        .filter(dutyManager::isOnDuty)
-                        .map(Player::getName)
-                        .collect(Collectors.joining(", "));
-                return list.isEmpty() ? lang.getPlaceholder("no_staff_online") : list;
+                List<String> names = playtimeManager.getOnlineStaffNames();
+                return names.isEmpty() ? lang.getPlaceholder("no_staff_online") : String.join(", ", names);
 
             case "any_staff_online":
-                return String.valueOf(
-                        Bukkit.getOnlinePlayers().stream()
-                                .anyMatch(dutyManager::isOnDuty)
-                );
+                return String.valueOf(playtimeManager.getActiveSessionsCount() > 0);
         }
 
         if (p.startsWith("top_")) {

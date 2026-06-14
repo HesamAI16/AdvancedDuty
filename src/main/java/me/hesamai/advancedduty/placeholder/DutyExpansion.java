@@ -12,72 +12,64 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class DutyExpansion extends PlaceholderExpansion {
 
     private final Main plugin;
     private final DutyManager dutyManager;
     private final LanguageManager lang;
+    private final PlaytimeManager playtimeManager;
 
     public DutyExpansion(Main plugin) {
         this.plugin = plugin;
         this.dutyManager = plugin.getDutyManager();
         this.lang = plugin.getLanguageManager();
+        this.playtimeManager = dutyManager.getPlaytimeManager();
     }
 
     @Override public @NotNull String getIdentifier() { return "advancedduty"; }
-    @Override public @NotNull String getAuthor()     { return "hesamai"; }
-    @Override public @NotNull String getVersion()    { return plugin.getDescription().getVersion(); }
-    @Override public boolean persist()               { return true; }
-    @Override public boolean canRegister()           { return true; }
+    @Override public @NotNull String getAuthor() { return "hesamai"; }
+    @Override public @NotNull String getVersion() { return plugin.getDescription().getVersion(); }
+    @Override public boolean persist() { return true; }
+    @Override public boolean canRegister() { return true; }
 
     @Override
     public @Nullable String onPlaceholderRequest(Player player, @NotNull String params) {
-        String p = params.toLowerCase();
 
-        // ── Global (no player needed) ────────────────────────────────────────
+        final String p = params.toLowerCase(Locale.ROOT);
 
-        // %advancedduty_staff_online%
-        // Number of staff currently on duty
-        if (p.equals("staff_online")) {
-            return String.valueOf(
-                    Bukkit.getOnlinePlayers().stream().filter(dutyManager::isOnDuty).count()
-            );
+        switch (p) {
+
+            case "staff_online":
+                return String.valueOf(
+                        Bukkit.getOnlinePlayers().stream()
+                                .filter(dutyManager::isOnDuty)
+                                .count()
+                );
+
+            case "staff_list":
+                String list = Bukkit.getOnlinePlayers().stream()
+                        .filter(dutyManager::isOnDuty)
+                        .map(Player::getName)
+                        .collect(Collectors.joining(", "));
+                return list.isEmpty() ? lang.getPlaceholder("no_staff_online") : list;
+
+            case "any_staff_online":
+                return String.valueOf(
+                        Bukkit.getOnlinePlayers().stream()
+                                .anyMatch(dutyManager::isOnDuty)
+                );
         }
 
-        // %advancedduty_staff_list%
-        // Comma-separated names of on-duty staff  →  "Steve, Alex, Notch"
-        if (p.equals("staff_list")) {
-            StringBuilder sb = new StringBuilder();
-            for (Player pl : Bukkit.getOnlinePlayers()) {
-                if (dutyManager.isOnDuty(pl)) {
-                    if (sb.length() > 0) sb.append(", ");
-                    sb.append(pl.getName());
-                }
-            }
-            return sb.length() > 0 ? sb.toString() : lang.getPlaceholder("no_staff_online");
-        }
-
-        // %advancedduty_any_staff_online%
-        // "true" / "false" – useful for conditional scoreboard lines
-        if (p.equals("any_staff_online")) {
-            return String.valueOf(
-                    Bukkit.getOnlinePlayers().stream().anyMatch(dutyManager::isOnDuty)
-            );
-        }
-
-        // %advancedduty_top_1_name%  …  top_10_name
-        // %advancedduty_top_1_time%  …  top_10_time
         if (p.startsWith("top_")) {
             return handleTop(p);
         }
 
-        // ── Requires a player ────────────────────────────────────────────────
         if (player == null) return "";
 
-        boolean onDuty = dutyManager.isOnDuty(player);
-        PlaytimeManager pm = dutyManager.getPlaytimeManager();
-        UUID uuid = player.getUniqueId();
+        final boolean onDuty = dutyManager.isOnDuty(player);
+        final UUID uuid = player.getUniqueId();
 
         switch (p) {
 
@@ -95,33 +87,33 @@ public class DutyExpansion extends PlaceholderExpansion {
                 return String.valueOf(onDuty);
 
             case "playtime":
-                return PlaytimeFormatter.format(pm.getTotalPlaytime(uuid));
+                return PlaytimeFormatter.format(playtimeManager.getTotalPlaytime(uuid));
 
             case "playtime_ms":
-                return String.valueOf(pm.getTotalPlaytime(uuid));
+                return String.valueOf(playtimeManager.getTotalPlaytime(uuid));
 
             case "playtime_seconds":
-                return String.valueOf(pm.getTotalPlaytime(uuid) / 1000);
+                return String.valueOf(playtimeManager.getTotalPlaytime(uuid) / 1000);
 
             case "playtime_minutes":
-                return String.valueOf(pm.getTotalPlaytime(uuid) / 60_000);
+                return String.valueOf(playtimeManager.getTotalPlaytime(uuid) / 60_000);
 
             case "playtime_hours":
-                return String.valueOf(pm.getTotalPlaytime(uuid) / 3_600_000);
+                return String.valueOf(playtimeManager.getTotalPlaytime(uuid) / 3_600_000);
 
             case "session_duration":
                 return onDuty
-                        ? PlaytimeFormatter.format(pm.getCurrentSessionDuration(uuid))
+                        ? PlaytimeFormatter.format(playtimeManager.getCurrentSessionDuration(uuid))
                         : "0s";
 
             case "session_duration_ms":
-                return String.valueOf(onDuty ? pm.getCurrentSessionDuration(uuid) : 0L);
+                return String.valueOf(onDuty ? playtimeManager.getCurrentSessionDuration(uuid) : 0L);
 
             case "rank":
-                return String.valueOf(getRank(uuid, pm));
+                return String.valueOf(getRank(uuid));
 
             case "has_session":
-                return String.valueOf(pm.hasActiveSession(uuid));
+                return String.valueOf(playtimeManager.hasActiveSession(uuid));
 
             case "duty_icon":
                 return onDuty
@@ -134,6 +126,7 @@ public class DutyExpansion extends PlaceholderExpansion {
     }
 
     private @Nullable String handleTop(String params) {
+
         String[] parts = params.split("_");
         if (parts.length < 3) return null;
 
@@ -147,9 +140,7 @@ public class DutyExpansion extends PlaceholderExpansion {
         String field = parts[2];
         if (!field.equals("name") && !field.equals("time")) return null;
 
-        PlaytimeManager pm = dutyManager.getPlaytimeManager();
-        List<Map.Entry<UUID, Long>> sorted = new ArrayList<>(pm.getAllStored().entrySet());
-        sorted.sort((a, b) -> Long.compare(b.getValue(), a.getValue()));
+        List<Map.Entry<UUID, Long>> sorted = getSorted();
 
         if (rank < 1 || rank > sorted.size()) {
             return field.equals("name") ? "-" : "0s";
@@ -161,17 +152,30 @@ public class DutyExpansion extends PlaceholderExpansion {
             @SuppressWarnings("deprecation")
             String name = Bukkit.getOfflinePlayer(entry.getKey()).getName();
             return name != null ? name : entry.getKey().toString().substring(0, 8);
-        } else {
-            return PlaytimeFormatter.format(entry.getValue());
         }
+
+        return PlaytimeFormatter.format(entry.getValue());
     }
 
-    private int getRank(UUID uuid, PlaytimeManager pm) {
-        List<Map.Entry<UUID, Long>> sorted = new ArrayList<>(pm.getAllStored().entrySet());
-        sorted.sort((a, b) -> Long.compare(b.getValue(), a.getValue()));
+    private int getRank(UUID uuid) {
+
+        List<Map.Entry<UUID, Long>> sorted = getSorted();
+
         for (int i = 0; i < sorted.size(); i++) {
-            if (sorted.get(i).getKey().equals(uuid)) return i + 1;
+            if (sorted.get(i).getKey().equals(uuid)) {
+                return i + 1;
+            }
         }
+
         return 0;
+    }
+
+    private List<Map.Entry<UUID, Long>> getSorted() {
+
+        List<Map.Entry<UUID, Long>> sorted =
+                new ArrayList<>(playtimeManager.getAllStored().entrySet());
+
+        sorted.sort((a, b) -> Long.compare(b.getValue(), a.getValue()));
+        return sorted;
     }
 }

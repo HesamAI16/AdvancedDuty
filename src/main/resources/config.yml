@@ -14,11 +14,6 @@ language: en
 update:
   enabled: true
 
-  # GitHub repo
-  github:
-    owner: hesamai16
-    repo: AdvancedDuty
-
   # auto download new jar
   auto-download: true
 

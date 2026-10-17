@@ -1,0 +1,28 @@
+TITLE (Version title): 2.0.0 – The Big Update
+VERSION STRING: 2.0.0
+
+[CENTER][SIZE=6][B]AdvancedDuty 2.0 — a complete rewrite[/B][/SIZE][/CENTER]
+
+[B]New[/B]
+[LIST]
+[*]Vanish (built-in or SuperVanish/PremiumVanish), freeze with screenshare title, inspect (inventory & ender chest)
+[*]Configurable duty tools, per-rank profiles and a staff menu GUI
+[*]Scoreboard, bossbar, actionbar and tab display with per-player scoreboard toggle
+[*]Milestones with console-command rewards and a weekly staff quota with reports
+[*]Session history ([ICODE]/duty log[/ICODE]), today / week / month / all-time leaderboards, staff list
+[*]Staff chat 2.0 (toggle mode, mentions, cross-server) and a Discord [B]!staff[/B] bot command
+[*]SQLite and MariaDB support, network mode, restrictions, reasons, silent mode, world rules, auto-duty on join
+[*]Developer API with cancellable events, 30+ placeholders, Persian language
+[*]Config and language files update themselves on upgrade
+[/LIST]
+[B]Fixed[/B]
+[LIST]
+[*]Lost or duplicated items and playtime in edge cases (crash, reload, quit, multi-server)
+[*]All storage now runs asynchronously on an ordered thread; corrupt files are quarantined, never overwritten
+[*]Stale LuckPerms prefixes and nodes; AFK timer; offline player lookups; update downloader
+[/LIST]
+[B]Upgrade notes[/B]
+[LIST]
+[*]Just replace the jar. Check the [URL='https://github.com/HesamAI16/AdvancedDuty/blob/main/CHANGELOG.md']changelog[/URL]: a few defaults changed (remember-duty-state, restore-inventory-on-rejoin, auto-download).
+[*]Download: [URL='https://github.com/HesamAI16/AdvancedDuty/releases/tag/v2.0.0']GitHub release v2.0.0[/URL]
+[/LIST]

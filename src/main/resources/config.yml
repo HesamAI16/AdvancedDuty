@@ -1,305 +1,582 @@
-# =========================================================
-# AdvancedDuty Configuration | Ultimate Edition
-# =========================================================
-# This file configures the behavior and integrations of the AdvancedDuty plugin.
-# All settings are designed for maximum flexibility and control, especially for staff management.
-# =========================================================
+# =====================================================================
+#  AdvancedDuty 2.0  |  Configuration
+# =====================================================================
+#  * New options are added to this file automatically on update
+#    (your values and comments are kept; a backup is saved as config.yml.bak-vN).
+#  * Colors: &a  &#RRGGBB  <g:#00F5FF:#BD3EFF>gradient</g>
+#  * Durations: 30s, 15m, 5h, 2d, 1w, 1h30m ...
+#  * Commands in lists: "console:cmd" (default), "player:cmd", "message:text", "broadcast:text".
+#    Placeholders: {player} {uuid} + PlaceholderAPI.
+# =====================================================================
 
-# ---------------------------------------------------------
-# General Settings
-# ---------------------------------------------------------
-# Language file selection for plugin messages. Load from 'languages/' directory.
+config-version: 2
+
+# Merge new options / language keys into existing files on startup.
+auto-update-files: true
+
+# Language file from plugins/AdvancedDuty/languages (en, es, ru, zh, fa or your own).
 language: en
 
 update:
   enabled: true
-
-  # auto download new jar
-  auto-download: true
-
-  # check on startup
   check-on-startup: true
+  check-interval-hours: 12
+  # Tell players with advancedduty.update about new versions when they join.
+  notify-on-join: true
+  # Download new versions automatically (installed on next restart).
+  auto-download: false
 
+# ---------------------------------------------------------------------
+#  Multi-server (BungeeCord / Velocity)
+# ---------------------------------------------------------------------
 proxy-mode:
-  # Enable if this server is part of a BungeeCord or Velocity network.
-  # When enabled, storage.type must be set to MYSQL.
+  # Needs storage.type MYSQL or MARIADB (not YAML/SQLite).
   enabled: false
-
-  # Share playtime counters across all servers in the network.
-  # Players' duty time will be combined regardless of which server they're on.
+  # Unique name of THIS server (shown in staff list and staff chat).
+  server-name: server
+  # Share staff list / duty state between servers.
   shared-playtime: true
+  # Cross-server staff chat.
+  network-staffchat: true
+  # How often presence is synchronised.
+  sync-interval-seconds: 30
 
-  # How often (seconds) active duty sessions are pushed to the database.
-  # Lower = more accurate across servers, higher = less database load.
-  sync-interval-seconds: 60
-
+# ---------------------------------------------------------------------
+#  Duty behaviour
+# ---------------------------------------------------------------------
 duty:
-  # Settings applied when a player enters duty mode ('/duty on').
+  # Applied on '/duty on'. Can be overridden per group in 'profiles' below.
   apply:
-    flight: false # Enables flight.
-    heal: false   # Heals player (health, hunger, fire).
-    clear-active-potions: false # Clears potion effects.
-
+    flight: false
+    heal: false
+    clear-active-potions: false
     gamemode:
-      enabled: false # Enable gamemode change on duty.
-      mode: CREATIVE # Target gamemode (CREATIVE, SURVIVAL, etc.).
+      enabled: false
+      mode: CREATIVE
 
-  # Settings restored when a player exits duty mode ('/duty off').
+  # Restored on '/duty off'.
   restore:
-    gamemode: true # Restore previous gamemode.
-    flight: true   # Restore previous flight status.
-    exp: true      # Restore previous XP.
-    level: true    # Restore previous level.
-    food: true     # Restore previous hunger.
-    health: true   # Restore previous health.
-    location: false # Restore previous location (teleport).
+    gamemode: true
+    flight: true
+    exp: true
+    level: true
+    food: true
+    health: true
+    location: false
 
-  # If true, /duty on <reason> is mandatory
-  require-reason: false
+  # Automatically go back to the last duty state on join (old behaviour restored location/health too).
+  remember-duty-state: false
 
-  # Inventory management strategy.
+  # What happens when an on-duty player disconnects.
+  #   OFF  - duty is ended cleanly (inventory is restored)  [recommended]
+  #   KEEP - they stay on duty and continue next time they join
+  on-quit: KEEP
+
+  # Require a reason for '/duty on'.
+  reasons:
+    required: false
+    min-length: 0
+    max-length: 100
+    # Suggested in tab-completion.
+    presets:
+      - "Patrolling"
+      - "Handling reports"
+      - "Building"
+
+  # Worlds where duty is limited.
+  worlds:
+    # OFF = no limit, WHITELIST = only these worlds, BLACKLIST = not in these worlds
+    mode: OFF
+    list: []
+    # Take players off duty when they enter a blocked world.
+    force-off: true
+
+  # Put staff on duty automatically after joining.
+  auto-on-join:
+    enabled: false
+    permission: advancedduty.auto
+    delay-ticks: 20
+    reason: ""
+
   inventory:
-    # Use separate inventories for duty/off-duty states.
-    # If false, a single inventory is managed.
+    # Keep a separate inventory for duty and normal play.
     separate: true
-
-    # Save and restore the ender chest separately for duty/off-duty.
-    # Only effective when separate: true
     include-ender-chest: true
-
-    # Clear the duty inventory when going off-duty (instead of keeping it).
-    # Only effective when separate: true
     clear-on-duty-off: false
-
-    # When going on-duty and no previous duty inventory exists, clear the inventory.
-    # If false, player keeps their current inventory when first going on duty.
     clear-on-first-duty: true
 
   afk:
-    # Enable AFK detection for on-duty staff.
     enabled: true
-
-    # Minutes of inactivity before a staff member is considered AFK.
     timeout-minutes: 10
-
-    # How often (seconds) the server checks for AFK players.
     check-interval-seconds: 30
-
-    # Action when AFK is detected:
-    #   PAUSE     - Pause playtime counter, keep duty active.
-    #   AUTO_OFF  - Automatically take the player off duty.
-    #   KICK     - Kick the player from the server.
+    # PAUSE (stop counting playtime), AUTO_OFF (end duty), KICK
     action: PAUSE
-
-    # Broadcast a message to all staff when someone goes AFK on duty.
     notify-staff: true
-
-    # Warn the player X seconds before being marked AFK. 0 = disabled.
+    # Warn the player N seconds before being marked AFK. 0 = disabled.
     warn-before-seconds: 0
-
-    # Which player actions reset the AFK timer.
-    # Disable any you don't want to count as activity.
+    exempt-permission: advancedduty.afk.exempt
+    # What counts as activity.
     track:
-      movement:  true   # Walking / running (block position change)
-      look:      false  # Head rotation only (no position change)
-      chat:      true   # Sending a chat message
-      command:   true   # Running any command
-      interact:  true   # Right/left clicking blocks or entities
-      inventory: false  # Clicking inside an inventory
-      sneak:     false  # Toggling sneak
-      sprint:    false  # Toggling sprint
-      swing:     false  # Swinging arm (left-click in air)
+      movement: true
+      look: false
+      chat: true
+      command: true
+      interact: true
+      inventory: false
+      sneak: false
+      sprint: false
+      swing: false
 
   cooldown:
     enabled: false
-
-    # Players with this permission bypass cooldown
     bypass-permission: advancedduty.cooldown.bypass
-
-    # Cooldown when turning ON duty (seconds)
     on-duty: 30
-
-    # Cooldown when turning OFF duty (seconds)
     off-duty: 10
 
-# Method for storing player data (inventories, sessions).
+# ---------------------------------------------------------------------
+#  Profiles: different duty setups per rank. The highest 'priority' profile the
+#  player has permission for wins. Unset options fall back to duty.apply.
+#  Delete or add as many as you like.
+# ---------------------------------------------------------------------
+profiles:
+  helper:
+    enabled: true
+    permission: advancedduty.profile.helper
+    priority: 10
+    gamemode: SURVIVAL
+    flight: true
+    vanish: false
+    tools: default
+    scoreboard: default
+    tab-prefix: "&a[Helper] "
+    potion-effects:
+      - "NIGHT_VISION:0"
+    commands-on: []
+    commands-off: []
+  moderator:
+    enabled: true
+    permission: advancedduty.profile.mod
+    priority: 20
+    gamemode: CREATIVE
+    flight: true
+    vanish: true
+    god-mode: true
+    glow: false
+    tools: default
+    scoreboard: default
+    tab-prefix: "&c[Mod] "
+    potion-effects:
+      - "NIGHT_VISION:0"
+    commands-on: []
+    commands-off: []
+
+# ---------------------------------------------------------------------
+#  Messages & effects
+# ---------------------------------------------------------------------
+# Text comes from the language file (announce-on / announce-off).
+announce:
+  on-duty:
+    # NONE, STAFF (staff only), ALL (everyone, hidden if vanished)
+    mode: NONE
+  off-duty:
+    mode: NONE
+
+# Feedback for the player who toggles duty.
+effects:
+  on-duty:
+    sound: {enabled: false, name: ENTITY_PLAYER_LEVELUP, volume: 1.0, pitch: 1.0}
+    title: {enabled: false, title: "&aON DUTY", subtitle: "&7Stay vigilant"}
+    actionbar: {enabled: false, text: "&aON DUTY"}
+  off-duty:
+    sound: {enabled: false, name: ENTITY_EXPERIENCE_ORB_PICKUP, volume: 1.0, pitch: 1.0}
+    title: {enabled: false, title: "&cOFF DUTY", subtitle: "&7Thanks for your work"}
+    actionbar: {enabled: false, text: "&cOFF DUTY"}
+
+# ---------------------------------------------------------------------
+#  Restrictions
+# ---------------------------------------------------------------------
+restrictions:
+  on-duty:
+    # Commands staff cannot run while ON duty (prefix match, no slash).
+    blocked-commands: []
+  off-duty:
+    # Commands that require duty (blocked while OFF duty). Players with
+    # advancedduty.bypass.restrictions are not affected.
+    blocked-commands: []
+
+# ---------------------------------------------------------------------
+#  Duty tools (hotbar items given on duty, removed on duty off)
+#  Actions: VANISH FLY NIGHT_VISION DUTY_OFF FREEZE INSPECT RANDOM_TP
+#           STAFF_LIST PLAYER_LIST MENU COMMAND
+#  'action' = right click, 'left-click' = left click (optional).
+#  'permission' (optional) limits who gets the item. 'tools: <set>' in a profile picks the set.
+# ---------------------------------------------------------------------
+tools:
+  enabled: false
+  # Stop tool items being dropped, moved or stored.
+  protect: true
+  sets:
+    default:
+      items:
+        vanish:
+          slot: 0
+          material: ENDER_EYE
+          name: "&bToggle vanish"
+          lore: ["&7Right-click"]
+          action: VANISH
+          permission: advancedduty.vanish
+        freeze:
+          slot: 1
+          material: PACKED_ICE
+          name: "&3Freeze player"
+          lore: ["&7Right-click a player"]
+          action: FREEZE
+          permission: advancedduty.freeze
+        inspect:
+          slot: 2
+          material: BOOK
+          name: "&eInspect inventory"
+          lore: ["&7Right-click a player"]
+          action: INSPECT
+          permission: advancedduty.inspect
+        random-tp:
+          slot: 3
+          material: COMPASS
+          name: "&aRandom teleport"
+          action: RANDOM_TP
+          permission: advancedduty.randomtp
+        staff-list:
+          slot: 7
+          material: PLAYER_HEAD
+          name: "&6Online staff"
+          action: STAFF_LIST
+        menu:
+          slot: 8
+          material: NETHER_STAR
+          name: "&dStaff menu"
+          action: MENU
+          permission: advancedduty.gui
+
+# ---------------------------------------------------------------------
+#  Vanish
+# ---------------------------------------------------------------------
+vanish:
+  # BUILTIN (plugin hides you), COMMAND (run your vanish plugin's commands), NONE (disabled)
+  mode: BUILTIN
+  # Must be on duty to vanish; going off duty un-vanishes.
+  require-duty: true
+  silent-join-quit: true
+  disable-pickup: true
+  ignore-mobs: true
+  ignore-pressure-plates: true
+  fake-join-message:
+    enabled: false
+  fake-leave-message:
+    enabled: false
+  # Used by mode COMMAND (e.g. SuperVanish / PremiumVanish).
+  commands:
+    on: []
+    off: []
+
+# ---------------------------------------------------------------------
+#  Freeze (/duty freeze <player>)
+# ---------------------------------------------------------------------
+freeze:
+  invulnerable: true
+  block-inventories: true
+  # Frozen players can only chat with staff.
+  private-chat: true
+  # Seconds between reminder messages. 0 = off.
+  reminder-seconds: 5
+  reminder-title: false
+  title:
+    enabled: true
+    title: "&b&lFROZEN"
+    subtitle: "&7Do not log out - join the screenshare"
+  # Commands frozen players may still use.
+  allowed-commands: []
+  # Potion effects applied while frozen ("NAME:amplifier[:seconds]").
+  effects:
+    - "BLINDNESS:0"
+  # Run when a frozen player disconnects ({player}).
+  on-quit-commands: []
+  unfreeze-after-quit-commands: false
+
+# ---------------------------------------------------------------------
+#  Displays (shown only while on duty)
+# ---------------------------------------------------------------------
+display:
+  update-ticks: 20
+  scoreboard:
+    enabled: false
+    layouts:
+      default:
+        title: "&6&lDUTY"
+        lines:
+          - "&7Status: &aON DUTY"
+          - "&7Session: &f{duty_time}"
+          - "&7Week: &f{week}"
+          - "&7Vanish: &f{vanished}"
+          - "&7Staff: &f{staff_online}  &7TPS: &f{tps}"
+          - "&7Quota: &f{quota}% {quota_bar}"
+  bossbar:
+    enabled: false
+    text: "&aON DUTY &7- &f{duty_time}"
+    color: GREEN
+    style: SOLID
+    # QUOTA (weekly quota progress), FULL, NONE
+    progress: QUOTA
+  actionbar:
+    enabled: false
+    interval-ticks: 40
+    text: "&aON DUTY &7- &f{duty_time}"
+# Placeholders: {player} {displayname} {duty_time} {total} {today} {week} {month} {rank}
+#   {rank_week} {staff_online} {online} {max} {tps} {ping} {world} {vanished} {afk} {frozen}
+#   {quota} {quota_bar} {quota_required} {date} {time}  (+ PlaceholderAPI)
+
+# ---------------------------------------------------------------------
+#  Playtime
+# ---------------------------------------------------------------------
+playtime:
+  top-per-page: 10
+  # Daily records kept for week/month leaderboards.
+  keep-daily-days: 120
+  leaderboard-refresh-seconds: 60
+  # SYSTEM or a zone id like Europe/Berlin
+  timezone: SYSTEM
+  week-start: MONDAY
+  # '/duty reset <player>' needs the 'confirm' word.
+  reset-requires-confirm: true
+
+# ---------------------------------------------------------------------
+#  Session history (/duty log)
+# ---------------------------------------------------------------------
+history:
+  enabled: true
+  max-entries-per-player: 200
+  per-page: 8
+  date-format: "yyyy-MM-dd HH:mm"
+
+# ---------------------------------------------------------------------
+#  Milestones - rewards for reaching duty-time goals (once per period)
+# ---------------------------------------------------------------------
+milestones:
+  enabled: true
+  check-seconds: 60
+  goals:
+    weekly-10h:
+      enabled: false
+      name: "Weekly 10h"
+      period: WEEK          # DAY, WEEK, MONTH, ALL
+      required: 10h
+      permission: ""
+      commands:
+        - "console:eco give {player} 5000"
+      message: "&aYou reached the &e{goal} &agoal ({time})!"
+      broadcast: ""
+      sound: ENTITY_PLAYER_LEVELUP
+
+# Weekly staff quota (/duty quota)
+quota:
+  enabled: false
+  period: WEEK
+  required: 5h
+  exempt-permission: advancedduty.quota.exempt
+  notify-on-join: true
+  # Per-permission override: permission: required time
+  overrides: {}
+  bar:
+    full: "&a|"
+    empty: "&7|"
+
+# ---------------------------------------------------------------------
+#  Storage
+# ---------------------------------------------------------------------
 storage:
-  # Type: YAML (file-based) or MYSQL (database-based).
+  # YAML, SQLITE, MYSQL or MARIADB. YAML data is imported automatically when you switch.
   type: YAML
-
-  # Unload player profiles from memory on quit to save RAM.
-  unload-profile-on-quit: false
-
-  # YAML specific settings.
+  autosave-seconds: 300
+  flush-seconds: 30
+  unload-profile-on-quit: true
+  # Put an on-duty player back on duty (with duty inventory) after a crash/rejoin.
+  restore-session-on-join: true
+  restore-inventory-on-rejoin: false
   yaml:
-    # Folder for storing YAML player data files.
     folder: data
-
-  # MySQL specific settings.
+    backup: true
+  sqlite:
+    file: data/advancedduty.db
   mysql:
     host: localhost
     port: 3306
     database: advancedduty
     username: root
-    password: "" # Leave empty if no password.
-    table: duty_inventories
-    use-ssl: false # Enable SSL for secure connection.
-
+    password: ""
+    use-ssl: false
+    extra-url-parameters: ""
     pool-size: 5
     connection-timeout-ms: 5000
     max-lifetime-ms: 600000
+    # Table names (letters, digits, underscore only)
+    table: duty_inventories
+    playtime-table: duty_playtime
+    daily-table: duty_playtime_daily
+    claims-table: duty_claims
+    history-table: duty_history
+    presence-table: duty_presence
+    chat-table: duty_chat
 
+# ---------------------------------------------------------------------
+#  Hooks
+# ---------------------------------------------------------------------
 hooks:
-  # LuckPerms integration settings.
   luckperms:
-    # Enables or disables the LuckPerms hook.
     enabled: true
+    # Temporary prefix while on duty (never saved to the user).
+    duty-prefix:
+      enabled: false
+      # Fixed prefix; empty = use the 'on-duty prefix' meta of the group.
+      fixed: ""
     duty-meta:
       enabled: true
-
+      # groups/permissions: plain names or {name/node, action: ADD|REMOVE|OVERWRITE|SYNC, value}
       on-duty:
         groups: []
         permissions: []
-
       off-duty:
         groups: []
-        permissions:
-          - node: advancedduty.use
-            action: ADD # (Actions: ADD | REMOVE | OVERWRITE | SYNC)
-            value: true
-
-    # Staff toggle system for dynamic permission/group management.
+        permissions: []
+    # Staff groups/permissions are taken away when off duty and given back on duty.
     staff-toggle:
-      # Enables or disables the staff toggle system.
-      enabled: true
-
-      # Mode: GROUPS, PERMISSIONS, or BOTH.
-      # Determines what is toggled based on duty status.
+      enabled: false
+      # GROUPS, PERMISSIONS, BOTH
       mode: BOTH
-
-      # List of LuckPerms groups managed by the staff toggle.
-      groups:
-        - owner
-        - developer
-        - admin
-        - moderator
-        - helper
-
-      # List of specific permission nodes managed by the staff toggle.
-      permissions:
-        - staff.chat
-        - staff.vanish
-        - staff.mod
-
-    # Controls how staff players appear and are identified.
+      groups: []
+      permissions: []
+      enforce-on-join: false
     staff-visibility:
-      enabled: true
-
-      # Enables a visible glow effect for staff players, regardless of duty status.
-      # Requires compatible server version or plugins.
-      glow: true
-
-      # --- Name Tag Suffix/Prefix Configuration ---
-      # Allows adding dynamic prefixes/suffixes to staff names.
+      enabled: false
+      glow: false
       name-tag:
-        # Enables or disables name tag modification.
-        enabled: true
-        # Suffix to append to staff player names (e.g., color codes like '&b').
-        # Example: " &8[&bSTAFF&8]"
-        suffix: " &8[&bSTAFF&8]"
-        # Prefix to prepend to staff player names.
-        # Example: "[Staff] "
+        enabled: false
         prefix: ""
-        # Priority (weight) for name tag modification. Lower numbers = higher priority.
-        # Crucial for avoiding conflicts with other plugins. Typical range: 10-100.
+        suffix: " &8[&bSTAFF&8]"
         weight: 20
 
+# ---------------------------------------------------------------------
+#  Staff chat (/sc, /duty staffchat)
+# ---------------------------------------------------------------------
 staffchat:
-  # Require the sender to be on duty to use staff chat.
   require-on-duty: true
-
-  # Message format for staff chat.
-  # Placeholders: {player}, {message}
-  # Supports color codes (&) and hex (&#RRGGBB).
   format: "&8[&bSTAFF&8] &7{player}&8: &f{message}"
-
-  # Log staff chat messages to console even when sender is a player.
+  # Used for messages coming from other servers (proxy-mode)
+  format-remote: "&8[&bSTAFF&8|&d{server}&8] &7{player}&8: &f{message}"
+  # Typing a message starting with this goes straight to staff chat (empty = off)
+  chat-prefix: ""
+  max-length: 256
   log-to-console: true
-
-  # Play a sound when a staff chat message is received.
+  # Keep toggle-mode across relogs.
+  toggle-persist: false
   sound:
     enabled: false
-    # Sound name from Bukkit Sound enum.
     name: BLOCK_NOTE_BLOCK_PLING
     volume: 1.0
     pitch: 1.2
-
-  # Mention highlighting settings.
   mentions:
     enabled: true
-    # Color applied to the @Name part.
+    # true = only "@Name"
+    require-at: false
     color: "&a"
-    # Color to reset to after the mention.
     reset-color: "&f"
-    # Play a sound to the mentioned player.
     sound:
       enabled: true
       name: ENTITY_EXPERIENCE_ORB_PICKUP
       volume: 1.0
       pitch: 2.0
 
-playtime:
-  # Number of entries shown per page in '/duty top'.
-  top-per-page: 10
-
+# ---------------------------------------------------------------------
+#  Duty log files
+# ---------------------------------------------------------------------
 duty-log:
   enabled: true
-
-  # Folder inside plugin directory
   folder: data/logs
-
-  # File format: DAILY or SINGLE
-  # DAILY  -> 2026-06-12.log
-  # SINGLE -> duty.log
+  # DAILY or SINGLE
   file-mode: DAILY
-
-  # Delete logs older than X days
   delete-after-days: 30
-
-  # Write logs async (recommended)
   async: true
-
-  # Log format
   format: "[{time}] {player} -> {status}{reason}"
-
-  # Time format
   time-format: "yyyy-MM-dd HH:mm:ss"
 
+# ---------------------------------------------------------------------
+#  Discord (webhooks + optional polling bot, no extra libraries)
+# ---------------------------------------------------------------------
 discord:
   enabled: false
-  webhook-url: "https://discord.com/api/webhooks/YOUR_ID/YOUR_TOKEN"
+  webhook-url: ""
+  # false = only discord.com / discordapp.com webhook URLs are accepted.
+  allow-custom-urls: false
 
-  # Send a message when a staff member goes on/off duty
   duty-events:
     enabled: true
-    # Color of the embed (decimal). Green=3066993, Red=15158332
+    # Do not announce vanished staff.
+    hide-vanished: true
+    title-on: "🟢 {player} is now ON DUTY"
+    title-off: "🔴 {player} went OFF DUTY"
     color-on-duty: 3066993
     color-off-duty: 15158332
-    # Thumbnail URL (leave empty to disable)
     thumbnail: ""
-    # Footer text
     footer: "AdvancedDuty"
-    # Fields to include in embed
     show-reason: true
-    show-duration: true   # Only for off-duty events (how long they were on duty)
+    show-duration: true
     show-playtime-total: true
+    show-server: false
 
-  # Forward staff chat messages to Discord
+  # Other events: type -> freeze, freeze-quit, milestone
+  events:
+    freeze:
+      enabled: false
+      webhook-url: ""
+      title: "🧊 {subject} was frozen"
+      description: "By {detail}"
+      color: 3447003
+    freeze-quit:
+      enabled: false
+      webhook-url: ""
+      title: "🚪 {subject} logged out while frozen"
+      description: "Frozen by {detail}"
+      color: 15158332
+    milestone:
+      enabled: false
+      webhook-url: ""
+      title: "🏆 {subject} reached a milestone"
+      description: "{detail}"
+      color: 15105570
+
   staffchat:
     enabled: false
-    # Use a separate webhook URL for staff chat (leave empty to use main webhook-url)
     webhook-url: ""
     username: "Staff Chat"
     avatar-url: ""
-    # Format: supports {player} and {message}
     format: "**[STAFF]** {player}: {message}"
+
+  # Polling bot: players type e.g. !staff in a channel and get the online staff list.
+  bot:
+    enabled: false
+    token: ""
+    channel-id: ""
+    prefix: "!"
+    poll-seconds: 5
+    staff-command:
+      enabled: true
+      names: ["staff"]
+      title: "Staff online"
+      color: 3447003
+      line-on: "🟢 **{player}** - {time}"
+      line-off: "⚪ {player}"
+      include-off-duty: true
+      empty: "No staff online."
+      footer: "AdvancedDuty"
+    # Your own text commands: name -> response
+    commands-custom:
+      ip:
+        response: "Server IP: play.example.com"

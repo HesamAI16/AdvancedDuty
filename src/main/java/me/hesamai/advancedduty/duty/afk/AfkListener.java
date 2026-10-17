@@ -1,103 +1,80 @@
 package me.hesamai.advancedduty.duty.afk;
 
 import me.hesamai.advancedduty.Main;
-import org.bukkit.event.*;
-import org.bukkit.event.player.*;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerAnimationEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.event.player.PlayerToggleSprintEvent;
 
+/** Feeds player actions into the {@link AfkManager}; each action type can be disabled in the config. */
 public class AfkListener implements Listener {
 
-    private final AfkManager afkManager;
+    private final AfkManager afk;
     private final Main plugin;
 
-    public AfkListener(AfkManager afkManager, Main plugin) {
-        this.afkManager = afkManager;
+    public AfkListener(AfkManager afk, Main plugin) {
+        this.afk = afk;
         this.plugin = plugin;
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onMove(PlayerMoveEvent e) {
-        if (!track("movement")) return;
-        if (e.getFrom().getBlockX() == e.getTo().getBlockX()
-                && e.getFrom().getBlockY() == e.getTo().getBlockY()
-                && e.getFrom().getBlockZ() == e.getTo().getBlockZ()) return;
-        afkManager.recordActivity(e.getPlayer().getUniqueId());
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onLook(PlayerMoveEvent e) {
-        if (!track("look")) return;
-        if (e.getFrom().getBlockX() != e.getTo().getBlockX()
+        if (e.getTo() == null) return;
+        boolean moved = e.getFrom().getBlockX() != e.getTo().getBlockX()
                 || e.getFrom().getBlockY() != e.getTo().getBlockY()
-                || e.getFrom().getBlockZ() != e.getTo().getBlockZ()) return;
-        if (e.getFrom().getYaw() == e.getTo().getYaw()
-                && e.getFrom().getPitch() == e.getTo().getPitch()) return;
-        afkManager.recordActivity(e.getPlayer().getUniqueId());
+                || e.getFrom().getBlockZ() != e.getTo().getBlockZ();
+        if (moved) {
+            if (track("movement", true)) afk.recordActivity(e.getPlayer().getUniqueId());
+        } else if (e.getFrom().getYaw() != e.getTo().getYaw() || e.getFrom().getPitch() != e.getTo().getPitch()) {
+            if (track("look", false)) afk.recordActivity(e.getPlayer().getUniqueId());
+        }
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onChat(AsyncPlayerChatEvent e) {
-        if (!track("chat")) return;
-        afkManager.recordActivity(e.getPlayer().getUniqueId());
+        if (track("chat", true)) afk.recordActivity(e.getPlayer().getUniqueId());
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onCommand(PlayerCommandPreprocessEvent e) {
-        if (!track("command")) return;
-        afkManager.recordActivity(e.getPlayer().getUniqueId());
+        if (track("command", true)) afk.recordActivity(e.getPlayer().getUniqueId());
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onInteract(PlayerInteractEvent e) {
-        if (!track("interact")) return;
-        afkManager.recordActivity(e.getPlayer().getUniqueId());
+        if (track("interact", true)) afk.recordActivity(e.getPlayer().getUniqueId());
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent e) {
-        if (!(e.getWhoClicked() instanceof org.bukkit.entity.Player)) return;
-        if (!track("inventory")) return;
-        afkManager.recordActivity(e.getWhoClicked().getUniqueId());
+    public void onInventoryClick(InventoryClickEvent e) {
+        if (!(e.getWhoClicked() instanceof Player)) return;
+        if (track("inventory", false)) afk.recordActivity(e.getWhoClicked().getUniqueId());
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onSneak(PlayerToggleSneakEvent e) {
-        if (!track("sneak")) return;
-        afkManager.recordActivity(e.getPlayer().getUniqueId());
+        if (track("sneak", false)) afk.recordActivity(e.getPlayer().getUniqueId());
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onSprint(PlayerToggleSprintEvent e) {
-        if (!track("sprint")) return;
-        afkManager.recordActivity(e.getPlayer().getUniqueId());
+        if (track("sprint", false)) afk.recordActivity(e.getPlayer().getUniqueId());
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onSwingArm(PlayerAnimationEvent e) {
-        if (!track("swing")) return;
-        afkManager.recordActivity(e.getPlayer().getUniqueId());
+    public void onSwing(PlayerAnimationEvent e) {
+        if (track("swing", false)) afk.recordActivity(e.getPlayer().getUniqueId());
     }
 
-    @EventHandler
-    public void onQuit(PlayerQuitEvent e) {
-        afkManager.remove(e.getPlayer().getUniqueId());
-    }
-
-    private boolean track(String key) {
-        return plugin.getConfig().getBoolean("duty.afk.track." + key, defaultFor(key));
-    }
-
-    private boolean defaultFor(String key) {
-        switch (key) {
-            case "movement":  return true;
-            case "chat":      return true;
-            case "command":   return true;
-            case "interact":  return true;
-            case "look":      return false;
-            case "inventory": return false;
-            case "sneak":     return false;
-            case "sprint":    return false;
-            case "swing":     return false;
-            default:          return true;
-        }
+    private boolean track(String key, boolean def) {
+        return plugin.getConfig().getBoolean("duty.afk.track." + key, def);
     }
 }

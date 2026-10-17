@@ -1,6 +1,10 @@
 package me.hesamai.advancedduty.util;
 
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.entity.Player;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -24,6 +28,34 @@ public final class MessageUtil {
         text = applyGradients(text);
         text = applyHex(text);
         return ChatColor.translateAlternateColorCodes('&', text);
+    }
+
+    private static final Pattern STRIP_AMP = Pattern.compile("(?i)&(#[0-9a-f]{6}|[0-9a-fk-or])");
+    private static final Pattern STRIP_SECTION = Pattern.compile("(?i)\u00A7[0-9a-fk-orx]");
+    private static final Pattern STRIP_GRADIENT = Pattern.compile("(?i)</?g(:#[0-9a-f]{6}:#[0-9a-f]{6})?>");
+
+    /** Removes every colour / format / gradient code (both {@code &} and section sign) from a text. */
+    public static String stripCodes(String text) {
+        if (text == null) return "";
+        String out = STRIP_GRADIENT.matcher(text).replaceAll("");
+        out = STRIP_AMP.matcher(out).replaceAll("");
+        out = STRIP_SECTION.matcher(out).replaceAll("");
+        return out;
+    }
+
+    /** Colours the text and returns it with all colours removed - handy for logs and Discord. */
+    public static String plain(String text) {
+        return ChatColor.stripColor(color(text));
+    }
+
+    /** Converts coloured text to chat components (legacy parsing, no click/hover injection possible). */
+    public static BaseComponent[] components(String coloredText) {
+        return TextComponent.fromLegacyText(color(coloredText));
+    }
+
+    public static void sendActionBar(Player player, String text) {
+        if (player == null) return;
+        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, components(text));
     }
 
     private static String applyHex(String text) {

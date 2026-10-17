@@ -1,3 +1,12 @@
+# =====================================================================
+# AdvancedDuty - English
+# Colors: &a  &#RRGGBB  <g:#00F5FF:#BD3EFF>gradient</g>
+# Leave a message empty ("") to silence it. Missing keys fall back to English automatically.
+# =====================================================================
+meta:
+  name: "English"
+  icon: WHITE_BANNER
+
 prefix: "<g:#00F5FF:#BD3EFF>&lDUTY</g> &7» "
 
 messages:
@@ -5,14 +14,24 @@ messages:
   no-permission: "&cYou do not have permission to use this command."
   version: "&7Your build version: &fv{version}"
   config-reloaded: "&aConfiguration and language files reloaded."
+  error: "&cSomething went wrong. Please tell an administrator (see the console)."
+  data-not-ready: "&cYour duty data could not be loaded, so duty is disabled for you. Rejoin or contact an administrator."
 
   update-checking: "&7Checking for plugin updates..."
   update-found: "&aA new version is available: &fv{version}"
-  update-downloading: "&eDownloading update... Restart the server after download."
+  update-downloading: "&eDownloading update... it is installed on the next restart."
+  update-downloaded: "&aUpdate downloaded. Restart the server to install it."
+  update-download-failed: "&cThe update could not be downloaded (see the console)."
+  update-no-jar: "&cThe latest release has no downloadable jar. Get it from the GitHub releases page."
+  update-failed: "&cCould not check for updates right now."
   update-latest: "&aYou are already using the latest version."
 
   duty-enabled: "&aDuty mode enabled."
   duty-disabled: "&cDuty mode disabled."
+  duty-restored: "&aWelcome back - you are still on duty."
+  auto-duty-enabled: "&aYou were put on duty automatically."
+  duty-cancelled: "&cAnother plugin prevented this change."
+  duty-world-blocked: "&cDuty is not allowed in this world."
   already-on-duty: "&eYou are already on duty."
   already-off-duty: "&eYou are already off duty."
   duty-enabled-other: "&aDuty for {player} has been enabled."
@@ -20,24 +39,36 @@ messages:
   already-on-duty-other: "&e{player} is already on duty."
   already-off-duty-other: "&e{player} is already off duty."
   target-no-duty-access: "&c{player} does not have access to duty."
-
   cooldown-active: "&cYou must wait &e{time}s &cbefore using this again."
-  usage-duty: "&cUsage: /{label} [on|off|toggle]"
+  usage-duty: "&cUsage: /{label} [on|off|toggle] [player] [reason]"
   usage-duty-reason: "&cUsage: /{label} <on|toggle> [player] <reason>"
   unknown-player: "&cPlayer not found."
+  announce-on: "&8[&aDUTY&8] &f{player} &7is now on duty &8(&7{reason}&8)"
+  announce-off: "&8[&cDUTY&8] &f{player} &7went off duty"
+
+  vanish-on: "&7You are now &bvanished&7."
+  vanish-off: "&7You are now &bvisible&7."
+  vanish-disabled: "&cVanish is disabled on this server."
+  vanish-needs-duty: "&cYou must be on duty to vanish."
+  fake-join: "&e{player} joined the game"
+  fake-leave: "&e{player} left the game"
 
   staffchat-not-on-duty: "&cYou must be on duty to use staff chat."
-  staffchat-format: "&8[&bSTAFF&8] &7{player}&8: &f{message}"
-  staffchat-usage: "&cUsage: /sc <message>"
-  help-staffchat: "&7/{label} staffchat <msg> &8- &fStaff chat"
+  staffchat-usage: "&cUsage: /{label} <message>"
+  staffchat-mode-on: "&aStaff chat mode &2ON&a - everything you type goes to staff chat. Use /sc to switch back."
+  staffchat-mode-off: "&7Staff chat mode &cOFF&7."
 
-  playtime-self: "&7Your on-duty playtime: &b{time}"
-  playtime-other: "&7{player}'s on-duty playtime: &b{time}"
+  playtime-card:
+    - "&8&m-----&r &6&lDuty Playtime: &f{player} &8&m-----"
+    - "&7Total: &b{total} &8| &7Rank: &e{rank}"
+    - "&7Today: &f{today} &8| &7Week: &f{week} &8| &7Month: &f{month}"
+    - "&7Sessions: &f{sessions} &8| &7Longest: &f{longest}"
   playtime-never: "&7{player} has no recorded on-duty time."
   playtime-reset: "&aPlaytime of &e{player} &ahas been reset."
   usage-reset: "&cUsage: /{label} reset <player>"
+  reset-confirm: "&eThis erases the playtime of &f{player}&e. Type &f/{label} reset {player} confirm &ewithin 30 seconds."
 
-  top-header: "&8&m-----&r &b&lTop Duty Playtime &8&m-----"
+  top-header: "&8&m-----&r &b&lTop Duty Playtime &7({period}) &8&m-----"
   top-entry: "&7{rank}. &f{player} &8» &b{time}"
   top-footer: "&8Page {page}/{max}"
   top-empty: "&7No playtime data found."
@@ -48,15 +79,84 @@ messages:
   log-empty: "&cNo duty log found for &f{player}&c."
 
   status-line: "&7Status of &e{player}&7: {status} &7| Playtime: &a{time}"
+  status-session: "&7  Session: &f{time} &8| &7Reason: &f{reason} &8| &7AFK: &f{afk}"
+
+  stafflist-header: "&8&m-----&r &6&lStaff Online &7({count}/{total} on duty) &8&m-----"
+  stafflist-on: "&a● &f{player} &7- &a{time}{afk}{vanished} &8{server}"
+  stafflist-off: "&7○ &7{player}{vanished} &8{server}"
+  stafflist-afk: " &e[AFK]"
+  stafflist-vanished: " &b[V]"
+  stafflist-empty: "&7No staff online right now."
+
+  goals-header: "&8&m-----&r &6&lMilestones &8&m-----"
+  goals-entry: "&7{goal} &8(&7{period}&8) &f{have}&7/&f{required} &8(&e{percent}%&8)"
+  goals-entry-done: "&a✔ &7{goal} &8(&7{period}&8) &a{required} reached"
+  goals-none: "&7There are no milestones configured."
+
+  quota-disabled: "&7The staff quota is not enabled."
+  quota-none: "&7You have no duty quota."
+  quota-met: "&a{player} met the {period} quota: &f{time}&7/&f{required} &8({bar}&8)"
+  quota-progress: "&7{player}'s {period} quota: &f{time}&7/&f{required} &8(&e{percent}%&8) {bar} &7- &c{remaining} &7to go"
+  quota-report-header: "&8&m-----&r &6&lQuota Report &7(need {required} / {period}) &8&m-----"
+  quota-report-entry: "&c✘ &f{player} &7{time}&8/&7{required}"
+  quota-report-all-met: "&aEveryone met the quota."
+
+  usage-freeze: "&cUsage: /duty {label} <player>"
+  freeze-done: "&b{player} &7has been frozen."
+  freeze-exempt: "&c{player} cannot be frozen."
+  unfreeze-done: "&b{player} &7has been unfrozen."
+  frozen-notice: "&b&lYou have been frozen by a staff member. &7Do not log out - follow their instructions."
+  unfrozen-notice: "&aYou have been unfrozen."
+  frozen-reminder: "&b&lYou are frozen. &7Stay online and talk to staff."
+  frozen-command-blocked: "&cYou cannot use commands while frozen."
+  frozen-chat-prefix: "&b[Frozen] &r"
+  freeze-staff-notify: "&8[&bFREEZE&8] &f{staff} &7froze &f{player}"
+  unfreeze-staff-notify: "&8[&bFREEZE&8] &f{staff} &7unfroze &f{player}"
+  freeze-quit-notify: "&8[&bFREEZE&8] &c{player} logged out while frozen!"
+  freeze-rejoin-notify: "&8[&bFREEZE&8] &f{player} &7rejoined while frozen"
+
+  usage-inspect: "&cUsage: /duty {label} <player>"
+  inspect-self: "&cUse your own inventory instead."
+  inspect-exempt: "&c{player} cannot be inspected."
+  inspect-opened: "&7Inspecting &f{player}&7."
+
+  tool-fly-on: "&7Flight &aenabled&7."
+  tool-fly-off: "&7Flight &cdisabled&7."
+  tool-click-player: "&7Right-click a player with this item."
+  tool-teleported: "&7Teleported to &f{player}&7."
+  tool-no-players: "&7There is nobody to teleport to."
+
+  restricted: "&cYou cannot do that while on duty."
+  restricted-command: "&cThis command is blocked while you are on duty."
+  restricted-need-duty: "&cYou must be on duty to use this command. Use &f/duty on&c."
+
+  scoreboard-hidden: "&7Duty scoreboard &chidden&7."
+  scoreboard-shown: "&7Duty scoreboard &ashown&7."
+
+  info:
+    - "&8&m-----&r &6&lAdvancedDuty v{version} &8&m-----"
+    - "&7Storage: &f{storage} &8| &7Language: &f{language}"
+    - "&7LuckPerms: &f{luckperms} &8| &7PlaceholderAPI: &f{papi}"
+    - "&7On duty: &f{onduty} &8| &7Vanished: &f{vanished} &8| &7Frozen: &f{frozen}"
+    - "&7Network: &f{network} &8| &7Discord: &f{discord}"
 
   help-header: "&8&m-----&r &6&lAdvancedDuty Help &8&m-----"
   help-on: "&7/{label} on [player] [reason] &8- &fGo on duty"
   help-off: "&7/{label} off [player] &8- &fGo off duty"
   help-toggle: "&7/{label} toggle [player] [reason] &8- &fToggle duty"
   help-status: "&7/{label} status [player] &8- &fView duty status"
-  help-playtime: "&7/{label} playtime [player] &8- &fCheck duty playtime"
-  help-playtimetop: "&7/{label} playtimetop [page] &8- &fTop playtime leaderboard"
-  help-log: "&7/{label} log [player] [page] &8- &fView duty log"
+  help-playtime: "&7/{label} playtime [player] &8- &fDuty playtime"
+  help-playtimetop: "&7/{label} playtimetop [today|week|month|all] [page] &8- &fLeaderboard"
+  help-log: "&7/{label} log [player] [page] &8- &fDuty history"
+  help-list: "&7/{label} list &8- &fOnline staff"
+  help-goals: "&7/{label} goals &8- &fYour milestones"
+  help-quota: "&7/{label} quota [player|report] &8- &fStaff quota"
+  help-vanish: "&7/{label} vanish &8- &fToggle vanish"
+  help-freeze: "&7/{label} freeze|unfreeze <player> &8- &fFreeze a player"
+  help-inspect: "&7/{label} inspect|echest <player> &8- &fLook into an inventory"
+  help-gui: "&7/{label} gui &8- &fStaff menu"
+  help-scoreboard: "&7/{label} scoreboard &8- &fToggle your duty scoreboard"
+  help-staffchat: "&7/{label} staffchat [message] &8- &fStaff chat (or /sc)"
   help-reset: "&7/{label} reset <player> &8- &fReset a player's playtime"
   help-reload: "&7/{label} reload &8- &fReload config"
   help-languages: "&7/{label} languages &8- &fOpen language selector"
@@ -70,10 +170,92 @@ messages:
   afk-paused: "&7Your duty playtime has been &epaused&7."
   afk-returned: "&aYou are no longer AFK. Playtime resumed."
   afk-auto-off: "&cYou were taken off duty due to inactivity."
+  afk-kick: "&cYou were kicked for being AFK while on duty."
   afk-staff-notify: "&7[AFK] &e{player} &7is now AFK while on duty."
   afk-warn: "&eWarning: You will be marked as AFK soon due to inactivity."
 
+# Text used by menus, scoreboards and Discord
+gui:
+  "yes": "&aYes"
+  "no": "&cNo"
+  no-reason: "none"
+  close: "&cClose"
+  previous: "&cPrevious page"
+  next: "&aNext page"
+  page: "&7Page &f{page}&7/&f{max}"
+  period:
+    all: "all time"
+    today: "today"
+    day: "today"
+    week: "this week"
+    month: "this month"
+  menu:
+    title: "&8Staff menu"
+    back: "&eBack to menu"
+    duty-on: "&aGo on duty"
+    duty-off: "&cGo off duty"
+    duty-lore:
+      - "&7Click to switch your duty state"
+    vanish: "&bToggle vanish"
+    vanish-lore:
+      - "&7Hide from (or show to) players"
+    staff-list: "&eOnline staff"
+    player-list: "&fOnline players"
+    scoreboard: "&6Toggle scoreboard"
+    my-stats: "&bYour duty stats"
+    top: "&6Leaderboard"
+  stats:
+    total: "&7Total: &f{time}"
+    week: "&7This week: &f{time}"
+    today: "&7Today: &f{time}"
+  staff:
+    title: "&8Online staff &7({count})"
+    "on": "&aOn duty"
+    "off": "&7Off duty"
+    session: "&7Session: &f{time}"
+    afk: "&eAFK"
+    vanished: "&bVanished"
+    click-teleport: "&eClick to teleport"
+  players:
+    title: "&8Online players &7({count})"
+    lore:
+      - "&7World: &f{world}"
+      - "&7Ping: &f{ping}ms"
+      - "&eLeft-click: teleport"
+      - "&eRight-click: inspect"
+      - "&eShift-click: freeze"
+  inspect:
+    title: "&8Inspecting {player}"
+    ender-title: "&8Ender chest of {player}"
+    ender-button: "&5Open ender chest"
+    refresh: "&eRefresh"
+    health: "&7Health: &f{value}"
+    food: "&7Food: &f{value}"
+    level: "&7Level: &f{value}"
+    gamemode: "&7Game mode: &f{value}"
+    world: "&7World: &f{value}"
+    ping: "&7Ping: &f{value}ms"
+  language:
+    title: "&8Languages - page {page}/{max}"
+    confirm-title: "&8Confirm language"
+    info: "&eLanguage browser"
+    info-lore:
+      - "&7Page: &f{page}&7/&f{max}"
+      - "&7Languages: &f{total}"
+      - "&7Current: &a{current}"
+    item-lore:
+      - "&7File: &f{file}"
+    current: "&aCurrent language"
+    click: "&eClick to select"
+    confirm: "&aConfirm"
+    cancel: "&cCancel"
+
 placeholders:
+  time:
+    day: "d"
+    hour: "h"
+    minute: "m"
+    second: "s"
   status:
     on_duty: "ON DUTY"
     off_duty: "OFF DUTY"

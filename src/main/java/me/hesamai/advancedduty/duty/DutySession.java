@@ -21,6 +21,7 @@ public final class DutySession {
     private final int previousFoodLevel;
     private final double previousHealth;
     private final Location previousLocation;
+    private boolean vanished;
 
     public DutySession(UUID playerId,
                        long startTime,
@@ -44,6 +45,14 @@ public final class DutySession {
         this.previousFoodLevel = previousFoodLevel;
         this.previousHealth = previousHealth;
         this.previousLocation = previousLocation == null ? null : previousLocation.clone();
+    }
+
+    public boolean isVanished() {
+        return vanished;
+    }
+
+    public void setVanished(boolean vanished) {
+        this.vanished = vanished;
     }
 
     public UUID getPlayerId() {
@@ -94,6 +103,7 @@ public final class DutySession {
         section.set("player-id", playerId.toString());
         section.set("start-time", startTime);
         section.set("reason", reason);
+        section.set("vanished", vanished);
         section.set("previous.gamemode", previousGameMode == null ? "SURVIVAL" : previousGameMode.name());
         section.set("previous.allow-flight", previousAllowFlight);
         section.set("previous.flying", previousFlying);
@@ -122,13 +132,18 @@ public final class DutySession {
             return null;
         }
 
-        UUID playerId = UUID.fromString(uuidRaw);
+        UUID playerId;
+        try {
+            playerId = UUID.fromString(uuidRaw);
+        } catch (IllegalArgumentException ex) {
+            return null;
+        }
         long startTime = section.getLong("start-time", System.currentTimeMillis());
         String reason = section.getString("reason", null);
 
         GameMode gameMode;
         try {
-            gameMode = GameMode.valueOf(section.getString("previous.gamemode", "SURVIVAL").toUpperCase());
+            gameMode = GameMode.valueOf(section.getString("previous.gamemode", "SURVIVAL").toUpperCase(java.util.Locale.ROOT));
         } catch (IllegalArgumentException ex) {
             gameMode = GameMode.SURVIVAL;
         }
@@ -156,7 +171,7 @@ public final class DutySession {
             }
         }
 
-        return new DutySession(
+        DutySession restored = new DutySession(
                 playerId,
                 startTime,
                 reason,
@@ -169,5 +184,7 @@ public final class DutySession {
                 health,
                 location
         );
+        restored.vanished = section.getBoolean("vanished", false);
+        return restored;
     }
 }

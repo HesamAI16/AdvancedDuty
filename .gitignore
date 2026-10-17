@@ -16,3 +16,5 @@ logs/
 Thumbs.db
 
 *.jar
+_backup_v1_*/
+*.zip

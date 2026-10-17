@@ -1,0 +1,137 @@
+[CENTER]
+[IMG]https://raw.githubusercontent.com/HesamAI16/AdvancedDuty/main/docs/images/banner.png[/IMG]
+
+[SIZE=2][COLOR=#888888]v2.0.0  |  Paper & Spigot 1.19 – 1.21  |  Java 17+  |  Free & open source[/COLOR][/SIZE]
+
+[URL='https://github.com/HesamAI16/AdvancedDuty/releases/latest'][B][SIZE=4]⬇ Download latest release (GitHub)[/SIZE][/B][/URL]
+
+[URL='https://github.com/HesamAI16/AdvancedDuty'][B]Source code[/B][/URL]   •   [URL='https://github.com/HesamAI16/AdvancedDuty/issues'][B]Report an issue[/B][/URL]   •   [URL='https://discord.gg/U3HP2g3j38'][B]Discord support[/B][/URL]
+[/CENTER]
+
+[SIZE=2][COLOR=#333333]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/COLOR][/SIZE]
+[SIZE=3][B][COLOR=#AAAAAA]OVERVIEW[/COLOR][/B][/SIZE]
+[SIZE=6][B]A complete staff duty system[/B][/SIZE]
+[B]AdvancedDuty[/B] gives your staff team a clean separation between moderating and playing. Going [B]on duty[/B] swaps the inventory, applies the rank's tools, permissions and effects, and starts tracking time. Going [B]off duty[/B] restores everything exactly as it was — gamemode, flight, health, hunger, XP and location.
+
+Version [B]2.0[/B] is a ground-up rewrite focused on reliability and completeness: asynchronous storage that cannot lose data, vanish, freeze, inspection tools, per-rank profiles, quotas, analytics, Discord integration and network support — all configurable.
+
+[CENTER][IMG]https://raw.githubusercontent.com/HesamAI16/AdvancedDuty/main/docs/images/features.png[/IMG][/CENTER]
+
+[SIZE=2][COLOR=#333333]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/COLOR][/SIZE]
+[SIZE=3][B][COLOR=#AAAAAA]SHOWCASE[/COLOR][/B][/SIZE]
+[CENTER][IMG]https://raw.githubusercontent.com/HesamAI16/AdvancedDuty/main/docs/images/showcase.png[/IMG][/CENTER]
+
+[SIZE=2][COLOR=#333333]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/COLOR][/SIZE]
+[SIZE=3][B][COLOR=#AAAAAA]HIGHLIGHTS[/COLOR][/B][/SIZE]
+[SIZE=6][B]What's included[/B][/SIZE]
+[B]Duty & state handling[/B]
+[LIST]
+[*]Separate on-duty inventory and ender chest, restored on every switch
+[*]Optional reasons (required / min length / presets), silent mode ([ICODE]-s[/ICODE]), cooldowns, world allow/deny lists, auto-duty on join
+[*]Per-rank [B]profiles[/B]: gamemode, flight, vanish, god mode, effects, tab prefix, tools, scoreboard and commands
+[*]Safe by design: if a player's data cannot be loaded, duty is refused instead of overwriting their inventory
+[/LIST]
+[B]Moderation tools[/B]
+[LIST]
+[*][B]Vanish[/B] – built-in or through SuperVanish / PremiumVanish; silent join & quit
+[*][B]Freeze[/B] – screenshare title, private chat, allowed commands, quit-while-frozen actions, survives restarts
+[*][B]Inspect[/B] – inventory & ender chest viewer, read-only or editable
+[*][B]Duty tools[/B] – configurable hotbar items; [B]Staff menu[/B] GUI with teleport / inspect / freeze
+[/LIST]
+[B]Analytics & motivation[/B]
+[LIST]
+[*]Playtime for today / week / month / all time with cached leaderboards and full session history
+[*]AFK detection (PAUSE, AUTO_OFF or KICK) with configurable activity tracking
+[*][B]Milestones[/B] with console-command rewards and a weekly [B]staff quota[/B] with overrides, exemptions and reports
+[*]Scoreboard, bossbar, actionbar and tab display while on duty
+[/LIST]
+[B]Integrations[/B]
+[LIST]
+[*]LuckPerms: group/permission toggling, transient duty prefixes and name tags
+[*]PlaceholderAPI: 30+ placeholders (status, session, rank, quota, staff counts, …)
+[*]Discord: duty, freeze and milestone embeds, staff-chat relay and a [B]!staff[/B] bot command — no extra libraries
+[*]Storage: YAML, SQLite, MySQL and MariaDB with automatic migration; BungeeCord / Velocity network mode
+[*]Languages: English, Spanish, Russian, Chinese and Persian; every message and GUI text is editable
+[*]Developer API with cancellable events
+[/LIST]
+
+[SIZE=2][COLOR=#333333]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/COLOR][/SIZE]
+[SIZE=3][B][COLOR=#AAAAAA]INSTALLATION[/COLOR][/B][/SIZE]
+[SIZE=6][B]Getting started[/B][/SIZE]
+[B]1.[/B] Download the jar from the [URL='https://github.com/HesamAI16/AdvancedDuty/releases/latest']latest GitHub release[/URL] and place it in [B]/plugins[/B].
+[B]2.[/B] Start the server and edit [B]plugins/AdvancedDuty/config.yml[/B] — every option is commented.
+[B]3.[/B] Optional: install LuckPerms and PlaceholderAPI; choose [ICODE]storage.type[/ICODE] (YAML, SQLITE, MYSQL or MARIADB).
+[B]4.[/B] Apply changes with [B]/duty reload[/B].
+
+[B]Upgrading from 1.x:[/B] just replace the jar. New options are added to your config automatically (your values and comments are kept, a backup is created) and YAML data is migrated when you switch to a SQL backend. Please read the [URL='https://github.com/HesamAI16/AdvancedDuty/blob/main/CHANGELOG.md']changelog[/URL] — a few defaults changed.
+
+[SIZE=2][COLOR=#333333]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/COLOR][/SIZE]
+[SIZE=3][B][COLOR=#AAAAAA]COMMANDS[/COLOR][/B][/SIZE]
+[SIZE=6][B]Command reference[/B][/SIZE]
+[CODE]
+/duty [on|off|toggle] [player] [reason] [-s]   Change duty (-s = silent)
+/duty status [player]                          Duty status
+/duty playtime [player]                        On-duty playtime
+/duty playtimetop [today|week|month|all]       Leaderboard
+/duty log [player] [page]                      Session history
+/duty list   (/stafflist)                      Online staff
+/duty goals                                    Your milestones
+/duty quota [player|report]                    Staff quota
+/duty vanish                                   Toggle vanish
+/duty freeze|unfreeze <player>                 Freeze a player
+/duty inspect|echest <player>                  Inspect inventory / ender chest
+/duty gui                                      Staff menu
+/duty scoreboard                               Toggle your duty scoreboard
+/staffchat [message]   (/sc)                   Staff chat (no message = toggle mode)
+/duty reset <player> confirm                   Reset playtime
+/duty languages | update | reload | version    Administration
+[/CODE]
+
+[SIZE=2][COLOR=#333333]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/COLOR][/SIZE]
+[SIZE=3][B][COLOR=#AAAAAA]PERMISSIONS[/COLOR][/B][/SIZE]
+[SIZE=6][B]Key permission nodes[/B][/SIZE]
+[CODE]
+advancedduty.use                 Use /duty on/off/toggle
+advancedduty.use.others          Toggle duty for others
+advancedduty.vanish              Use vanish          (.see = see vanished staff)
+advancedduty.freeze              Freeze players      (.exempt = cannot be frozen)
+advancedduty.inspect             Inspect inventories (.edit, .exempt)
+advancedduty.gui                 Staff menu          (.players, .teleport)
+advancedduty.staffchat           Staff chat          (.receive, .color)
+advancedduty.playtime            Playtime            (.others, .top, .reset)
+advancedduty.log                 Session history     (.others)
+advancedduty.goals / .quota      Milestones & quota  (.others, .report, .exempt)
+advancedduty.stafflist           Staff list
+advancedduty.scoreboard          Toggle the duty scoreboard
+advancedduty.cooldown.bypass     Bypass cooldowns
+advancedduty.reload / .update    Administration
+advancedduty.admin               Everything above (except exemptions)
+[/CODE]
+Profiles use their own nodes, e.g. [ICODE]advancedduty.profile.mod[/ICODE]. The full list is in the plugin.yml.
+
+[SIZE=2][COLOR=#333333]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/COLOR][/SIZE]
+[SIZE=3][B][COLOR=#AAAAAA]PLACEHOLDERAPI[/COLOR][/B][/SIZE]
+[SIZE=6][B]Placeholders[/B][/SIZE]
+[CODE]
+%advancedduty_status%  %advancedduty_status_color%  %advancedduty_is_on_duty%  %advancedduty_duty_icon%
+%advancedduty_session_duration%  %advancedduty_sessions%  %advancedduty_longest_session%  %advancedduty_rank%
+%advancedduty_vanished%  %advancedduty_afk%  %advancedduty_frozen%  %advancedduty_reason%
+%advancedduty_staff_online%  %advancedduty_staff_online_total%  %advancedduty_staff_count%  %advancedduty_staff_list%
+%advancedduty_any_staff_online%  %advancedduty_frozen_count%
+%advancedduty_quota_percent%  %advancedduty_quota_required%  %advancedduty_quota_remaining%  %advancedduty_quota_bar%  %advancedduty_quota_met%
+[/CODE]
+Playtime placeholders (total / today / week / month, plus [ICODE]_ms[/ICODE], [ICODE]_seconds[/ICODE], [ICODE]_minutes[/ICODE], [ICODE]_hours[/ICODE] variants) are listed in the README.
+
+[SIZE=2][COLOR=#333333]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/COLOR][/SIZE]
+[SIZE=3][B][COLOR=#AAAAAA]DEVELOPERS[/COLOR][/B][/SIZE]
+[SIZE=6][B]API[/B][/SIZE]
+[CODE=java]
+AdvancedDutyAPI.isOnDuty(player);
+AdvancedDutyAPI.setOnDuty(player, true);   // returns a DutyResult
+// Events: DutyToggleEvent (cancellable), DutyStateChangeEvent
+[/CODE]
+
+[CENTER][IMG]https://raw.githubusercontent.com/HesamAI16/AdvancedDuty/main/docs/images/footer.png[/IMG]
+
+[SIZE=2][COLOR=#666666]Made with ❤️ by [B]HesamAI[/B]  |  [URL='https://github.com/HesamAI16/AdvancedDuty'][COLOR=#888888]GitHub[/COLOR][/URL]  |  [URL='https://discord.gg/U3HP2g3j38'][COLOR=#888888]Discord[/COLOR][/URL][/COLOR][/SIZE]
+[/CENTER]

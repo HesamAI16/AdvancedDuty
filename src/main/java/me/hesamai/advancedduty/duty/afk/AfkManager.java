@@ -1,59 +1,64 @@
 package me.hesamai.advancedduty.duty.afk;
 
 import me.hesamai.advancedduty.Main;
+import me.hesamai.advancedduty.api.DutyCause;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+/** Detects inactive on-duty staff and pauses their playtime, takes them off duty or kicks them. */
 public class AfkManager {
 
     private final Main plugin;
     private final Map<UUID, Long> lastActivity = new ConcurrentHashMap<>();
-    private final Map<UUID, Boolean> afkStatus = new ConcurrentHashMap<>();
-    private final Map<UUID, Boolean> warnedPlayers = new ConcurrentHashMap<>();
-    private BukkitTask checkerTask;
+    private final Set<UUID> afk = ConcurrentHashMap.newKeySet();
+    private final Set<UUID> warned = ConcurrentHashMap.newKeySet();
+    private BukkitTask checker;
 
     public AfkManager(Main plugin) {
         this.plugin = plugin;
     }
 
     public void start() {
+        stop();
         if (!plugin.getConfig().getBoolean("duty.afk.enabled", true)) return;
-        long intervalTicks = plugin.getConfig().getLong("duty.afk.check-interval-seconds", 30) * 20L;
-        checkerTask = Bukkit.getScheduler().runTaskTimer(plugin, this::checkAll, intervalTicks, intervalTicks);
+        long ticks = Math.max(1, plugin.getConfig().getLong("duty.afk.check-interval-seconds", 30)) * 20L;
+        checker = Bukkit.getScheduler().runTaskTimer(plugin, this::checkAll, ticks, ticks);
     }
 
     public void stop() {
-        if (checkerTask != null) {
-            checkerTask.cancel();
-            checkerTask = null;
-        }
+        if (checker != null) checker.cancel();
+        checker = null;
     }
 
+    /** Resets the idle timer (join, going on duty). Also clears a stale AFK flag. */
     public void trackPlayer(UUID uuid) {
         lastActivity.put(uuid, System.currentTimeMillis());
+        afk.remove(uuid);
+        warned.remove(uuid);
     }
 
     public void remove(UUID uuid) {
         lastActivity.remove(uuid);
-        afkStatus.remove(uuid);
-        warnedPlayers.remove(uuid);
+        afk.remove(uuid);
+        warned.remove(uuid);
     }
 
     public boolean isAfk(UUID uuid) {
-        return Boolean.TRUE.equals(afkStatus.get(uuid));
+        return afk.contains(uuid);
     }
 
     public void recordActivity(UUID uuid) {
+        if (!plugin.getDutyManager().isOnDuty(uuid)) return;
         lastActivity.put(uuid, System.currentTimeMillis());
-        warnedPlayers.remove(uuid);
-        if (Boolean.TRUE.equals(afkStatus.get(uuid))) {
-            afkStatus.put(uuid, false);
+        warned.remove(uuid);
+        if (afk.remove(uuid)) {
             Player p = Bukkit.getPlayer(uuid);
             if (p != null) onReturn(p);
         }
@@ -61,71 +66,62 @@ public class AfkManager {
 
     private void checkAll() {
         long timeoutMs = plugin.getConfig().getLong("duty.afk.timeout-minutes", 10) * 60_000L;
-        long warnBeforeMs = plugin.getConfig().getLong("duty.afk.warn-before-seconds", 60) * 1_000L;
+        long warnMs = plugin.getConfig().getLong("duty.afk.warn-before-seconds", 0) * 1_000L;
+        long now = System.currentTimeMillis();
+        String exempt = plugin.getConfig().getString("duty.afk.exempt-permission", "advancedduty.afk.exempt");
 
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            if (!plugin.getDutyManager().isOnDuty(p)) continue;
+        for (UUID id : plugin.getDutyManager().getOnDutyPlayers()) {
+            Player p = Bukkit.getPlayer(id);
+            if (p == null) continue;
+            if (!exempt.isEmpty() && p.hasPermission(exempt)) continue;
+            if (afk.contains(id)) continue;
 
-            UUID uuid = p.getUniqueId();
-            long idleMs = System.currentTimeMillis() - lastActivity.getOrDefault(uuid, System.currentTimeMillis());
-            boolean alreadyAfk = isAfk(uuid);
-
-            if (!alreadyAfk && idleMs >= timeoutMs) {
-                warnedPlayers.remove(uuid);
-                afkStatus.put(uuid, true);
+            long idle = now - lastActivity.getOrDefault(id, now);
+            if (idle >= timeoutMs) {
+                warned.remove(id);
+                afk.add(id);
                 onAfk(p);
-            } else if (!alreadyAfk && warnBeforeMs > 0
-                    && !Boolean.TRUE.equals(warnedPlayers.get(uuid))
-                    && idleMs >= timeoutMs - warnBeforeMs) {
-                warnedPlayers.put(uuid, true);
-                p.sendMessage(plugin.getLanguageManager().getMessage("afk-warn"));
+            } else if (warnMs > 0 && idle >= timeoutMs - warnMs && warned.add(id)) {
+                plugin.getLanguageManager().send(p, "afk-warn");
             }
         }
     }
 
     private void onAfk(Player p) {
-        p.sendMessage(plugin.getLanguageManager().getMessage("afk-detected"));
-
-        String action = plugin.getConfig().getString("duty.afk.action", "PAUSE").toUpperCase();
+        plugin.getLanguageManager().send(p, "afk-detected");
+        String action = plugin.getConfig().getString("duty.afk.action", "PAUSE").toUpperCase(Locale.ROOT);
 
         switch (action) {
             case "AUTO_OFF":
-                plugin.getDutyManager().disableDuty(p);
-                p.sendMessage(plugin.getLanguageManager().getMessage("afk-auto-off"));
+                plugin.getDutyManager().disable(p, DutyCause.AFK, null);
+                plugin.getLanguageManager().send(p, "afk-auto-off");
+                afk.remove(p.getUniqueId());
                 break;
-
             case "KICK":
-                String kickMsg = plugin.getLanguageManager().getMessage("afk-kick");
-                Bukkit.getScheduler().runTask(plugin, () -> p.kickPlayer(kickMsg));
+                String msg = plugin.getLanguageManager().raw("afk-kick");
+                plugin.getDutyManager().disable(p, DutyCause.AFK, null);
+                afk.remove(p.getUniqueId());
+                p.kickPlayer(msg);
                 break;
-
             case "PAUSE":
             default:
-                plugin.getPlaytimeManager().pauseSession(p.getUniqueId());
-                p.sendMessage(plugin.getLanguageManager().getMessage("afk-paused"));
-
-                if (plugin.getConfig().getBoolean("duty.afk.notify-staff", true)) {
-                    broadcastStaff(p, "afk-staff-notify");
-                }
+                plugin.getPlaytime().pause(p.getUniqueId());
+                plugin.getLanguageManager().send(p, "afk-paused");
+                if (plugin.getConfig().getBoolean("duty.afk.notify-staff", true)) notifyStaff(p);
                 break;
         }
     }
 
     private void onReturn(Player p) {
-        String action = plugin.getConfig().getString("duty.afk.action", "PAUSE").toUpperCase();
-        if (action.equals("PAUSE")) {
-            plugin.getPlaytimeManager().resumeSession(p.getUniqueId());
-            p.sendMessage(plugin.getLanguageManager().getMessage("afk-returned"));
-        }
+        plugin.getPlaytime().resume(p.getUniqueId());
+        plugin.getLanguageManager().send(p, "afk-returned");
     }
 
-    private void broadcastStaff(Player afkPlayer, String msgKey) {
-        Map<String, String> placeholders = new HashMap<>();
-        placeholders.put("{player}", afkPlayer.getName());
-        String msg = plugin.getLanguageManager().getMessage(msgKey, placeholders);
+    private void notifyStaff(Player afkPlayer) {
         for (Player online : Bukkit.getOnlinePlayers()) {
+            if (online.equals(afkPlayer)) continue;
             if (plugin.getDutyManager().isOnDuty(online) || online.hasPermission("advancedduty.staffchat.receive")) {
-                online.sendMessage(msg);
+                plugin.getLanguageManager().send(online, "afk-staff-notify", "{player}", afkPlayer.getName());
             }
         }
     }

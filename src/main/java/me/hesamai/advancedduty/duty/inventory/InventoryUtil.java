@@ -18,6 +18,26 @@ public final class InventoryUtil {
         );
     }
 
+    /** Like {@link #capture(Player, boolean)} but leaves out items matching {@code skip} (staff tools). */
+    public static PlayerInventoryState captureWithout(Player player, boolean includeEnderChest,
+                                                      java.util.function.Predicate<ItemStack> skip) {
+        ItemStack[] contents = filter(player.getInventory().getContents(), skip);
+        ItemStack[] armor = filter(player.getInventory().getArmorContents(), skip);
+        ItemStack off = player.getInventory().getItemInOffHand();
+        if (off != null && skip.test(off)) off = null;
+        ItemStack[] ender = includeEnderChest ? filter(player.getEnderChest().getContents(), skip) : new ItemStack[0];
+        return new PlayerInventoryState(contents, armor, off, ender);
+    }
+
+    private static ItemStack[] filter(ItemStack[] source, java.util.function.Predicate<ItemStack> skip) {
+        ItemStack[] out = new ItemStack[source.length];
+        for (int i = 0; i < source.length; i++) {
+            ItemStack it = source[i];
+            out[i] = (it == null || skip.test(it)) ? null : it.clone();
+        }
+        return out;
+    }
+
     public static void restore(Player player, PlayerInventoryState state, boolean includeEnderChest) {
         if (state == null) {
             clear(player, includeEnderChest);

@@ -2,17 +2,24 @@ name: AdvancedDuty
 version: '${project.version}'
 main: me.hesamai.advancedduty.Main
 api-version: '1.19'
-author: [HesamAI]
+description: Duty mode, vanish, freeze, playtime, quotas and staff tools
+author: HesamAI
+website: https://github.com/
+softdepend: [LuckPerms, PlaceholderAPI]
 
 commands:
   duty:
-    description: Toggle duty mode
-    usage: /duty [on|off|toggle|status|playtime|playtimetop|reset|reload|version|help]
+    description: Duty mode and staff tools
+    usage: /<command> [on|off|toggle|status|playtime|playtimetop|log|list|goals|quota|vanish|freeze|inspect|gui|scoreboard|staffchat|reset|reload|languages|update|version|help]
     aliases: [staffduty, advancedduty, ad]
   staffchat:
     description: Staff chat
-    usage: /staffchat <message>
+    usage: /<command> [message]
     aliases: [sc]
+  stafflist:
+    description: Show online staff
+    usage: /<command>
+    aliases: [staff]
 
 permissions:
   advancedduty.use:
@@ -21,39 +28,172 @@ permissions:
   advancedduty.use.others:
     description: Toggle duty for other players
     default: op
-  advancedduty.cooldown.bypass:
-    description: Bypass duty on/off cooldown
-    default: op
-  advancedduty.languages:
-    description: Access the language selection GUI and change the plugin language.
-    default: op
-  advancedduty.update:
-    description: Check and download plugin updates
-    default: op
   advancedduty.status:
     description: Check own duty status
     default: op
   advancedduty.status.others:
-    description: Check other players' duty status
+    description: Check other players' status
     default: op
   advancedduty.playtime:
-    description: Check own duty playtime
+    description: View own duty playtime
     default: op
   advancedduty.playtime.others:
-    description: Check other players' duty playtime
+    description: View other players' playtime
     default: op
   advancedduty.playtime.top:
-    description: View top playtime leaderboard
+    description: View the playtime leaderboard
     default: op
   advancedduty.playtime.reset:
-    description: Reset a player's duty playtime
+    description: Reset a player's playtime
     default: op
   advancedduty.reload:
-    description: Reload plugin config
+    description: Reload config and languages
+    default: op
+  advancedduty.languages:
+    description: Change the plugin language
+    default: op
+  advancedduty.update:
+    description: Check/download updates; get update notices
     default: op
   advancedduty.staffchat:
-    description: Send messages in staff chat
+    description: Use staff chat
     default: op
   advancedduty.staffchat.receive:
-    description: Receive staff chat messages without being on duty
+    description: Read staff chat without being on duty
     default: op
+  advancedduty.staffchat.color:
+    description: Use color codes in staff chat
+    default: op
+  advancedduty.cooldown.bypass:
+    description: Bypass the duty cooldown
+    default: op
+  advancedduty.vanish:
+    description: Use vanish
+    default: op
+  advancedduty.vanish.see:
+    description: See vanished staff
+    default: op
+  advancedduty.freeze:
+    description: Freeze players
+    default: op
+  advancedduty.freeze.exempt.override:
+    description: Freeze players that are exempt
+    default: op
+  advancedduty.inspect:
+    description: Inspect inventories
+    default: op
+  advancedduty.inspect.edit:
+    description: Edit inspected inventories
+    default: op
+  advancedduty.inspect.exempt.override:
+    description: Inspect exempt players
+    default: op
+  advancedduty.gui:
+    description: Open the staff menu
+    default: op
+  advancedduty.gui.players:
+    description: Open the online players menu
+    default: op
+  advancedduty.gui.teleport:
+    description: Teleport from menus
+    default: op
+  advancedduty.log:
+    description: View own duty history
+    default: op
+  advancedduty.log.others:
+    description: View others' duty history
+    default: op
+  advancedduty.goals:
+    description: View milestones
+    default: op
+  advancedduty.quota:
+    description: View own quota
+    default: op
+  advancedduty.quota.others:
+    description: View others' quota
+    default: op
+  advancedduty.quota.report:
+    description: View the quota report
+    default: op
+  advancedduty.stafflist:
+    description: Use /stafflist
+    default: op
+  advancedduty.scoreboard:
+    description: Toggle the duty scoreboard
+    default: op
+  advancedduty.bypass.restrictions:
+    description: Ignore duty command restrictions
+    default: op
+  advancedduty.silent:
+    description: Use -s for silent duty changes
+    default: op
+  advancedduty.notify:
+    description: Receive duty announcements
+    default: op
+  advancedduty.randomtp:
+    description: Use the random teleport tool
+    default: op
+  advancedduty.auto:
+    description: Automatically go on duty when joining
+    default: op
+  advancedduty.reason.bypass:
+    description: Skip the reason requirement
+    default: op
+  advancedduty.freeze.exempt:
+    description: Cannot be frozen
+    default: false
+  advancedduty.inspect.exempt:
+    description: Cannot be inspected
+    default: false
+  advancedduty.afk.exempt:
+    description: Never marked AFK
+    default: false
+  advancedduty.quota.exempt:
+    description: No staff quota
+    default: false
+  advancedduty.admin:
+    description: All AdvancedDuty permissions
+    default: op
+    children:
+      advancedduty.use: true
+      advancedduty.use.others: true
+      advancedduty.status: true
+      advancedduty.status.others: true
+      advancedduty.playtime: true
+      advancedduty.playtime.others: true
+      advancedduty.playtime.top: true
+      advancedduty.playtime.reset: true
+      advancedduty.reload: true
+      advancedduty.languages: true
+      advancedduty.update: true
+      advancedduty.staffchat: true
+      advancedduty.staffchat.receive: true
+      advancedduty.staffchat.color: true
+      advancedduty.cooldown.bypass: true
+      advancedduty.vanish: true
+      advancedduty.vanish.see: true
+      advancedduty.freeze: true
+      advancedduty.freeze.exempt.override: true
+      advancedduty.inspect: true
+      advancedduty.inspect.edit: true
+      advancedduty.inspect.exempt.override: true
+      advancedduty.gui: true
+      advancedduty.gui.players: true
+      advancedduty.gui.teleport: true
+      advancedduty.log: true
+      advancedduty.log.others: true
+      advancedduty.goals: true
+      advancedduty.quota: true
+      advancedduty.quota.others: true
+      advancedduty.quota.report: true
+      advancedduty.stafflist: true
+      advancedduty.scoreboard: true
+      advancedduty.bypass.restrictions: true
+      advancedduty.silent: true
+      advancedduty.notify: true
+      advancedduty.randomtp: true
+      advancedduty.auto: true
+      advancedduty.reason.bypass: true
+  advancedduty.profile.*:
+    description: Example profile permissions (see profiles in config.yml)
+    default: false
